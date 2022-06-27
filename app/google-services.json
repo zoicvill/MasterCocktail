@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "15639524883",
+    "project_id": "mastercocktail-df7b6",
+    "storage_bucket": "mastercocktail-df7b6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:15639524883:android:d414cca237527653d371e6",
+        "android_client_info": {
+          "package_name": "com.safr.mastercocktail"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "15639524883-m588prnf8tlfjspm1tbf1dbqg479fs8b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDjIsFF8uKrhtKMUYQSfSvC8FYTt9Pg1rc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "15639524883-m588prnf8tlfjspm1tbf1dbqg479fs8b.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
