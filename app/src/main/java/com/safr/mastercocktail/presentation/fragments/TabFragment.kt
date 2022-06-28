@@ -9,9 +9,10 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.safr.mastercocktail.R
 import com.safr.mastercocktail.databinding.FragmentTabBinding
 import com.safr.mastercocktail.presentation.adapters.ViewPagerAdapter
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_tab.*
 
-
+@AndroidEntryPoint
 class TabFragment : Fragment() {
     private val titlesArray = arrayOf(
         "Cocktails",
@@ -20,6 +21,8 @@ class TabFragment : Fragment() {
 
     private var binding: FragmentTabBinding?  = null
     private val mBinding get() = binding!!
+
+    private var viewPagerAdapter: ViewPagerAdapter?  = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,8 +35,8 @@ class TabFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) = mBinding.run {
         super.onViewCreated(view, savedInstanceState)
 
-        val adapter = ViewPagerAdapter(parentFragmentManager, lifecycle)
-        pager.adapter = adapter
+        viewPagerAdapter = ViewPagerAdapter(childFragmentManager, lifecycle)
+        pager.adapter = viewPagerAdapter
 
         TabLayoutMediator(tabLayout, pager) { tab, position ->
             tab.text = titlesArray[position]

@@ -1,14 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:name="hu.hasza.cocktailapp.ui.list.CocktailFavListFragment"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".presentation.fragments.FavCocktailListFragment">
-
-    <!-- TODO: Update blank fragment layout -->
+    android:layout_height="match_parent">
     <TextView
+        android:id="@+id/no_fav_cocktail_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-condensed-medium"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:text="You have no favourites!"
+        android:visibility="gone"
+        android:textSize="30sp"
+        android:textStyle="bold" />
+    <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
-
-</FrameLayout>
+        android:id="@+id/list"
+        app:layoutManager="LinearLayoutManager"
+        tools:context=".ui.list.favourites.FavCocktailListFragment"
+        tools:listitem="@layout/cocktail_list_item"
+        android:requiresFadingEdge="vertical"
+        android:layout_margin="20dp"/>
+    <RelativeLayout
+        android:id="@+id/progressBarHolder"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:alpha="0.5">
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:indeterminate="true" />
+    </RelativeLayout>
+</RelativeLayout>

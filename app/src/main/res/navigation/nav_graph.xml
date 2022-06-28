@@ -9,5 +9,18 @@
         android:id="@+id/tabFragment"
         tools:layout="@layout/fragment_tab"
         android:name="com.safr.mastercocktail.presentation.fragments.TabFragment"
-        android:label="TabFragment" />
+        android:label="TabFragment" >
+        <action
+            android:id="@+id/action_tabFragment_to_cocktailDetailFragment"
+            app:destination="@id/cocktailDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/cocktailDetailFragment"
+        tools:layout="@layout/fragment_cocktail_detail"
+        android:name="com.safr.mastercocktail.presentation.fragments.CocktailDetailFragment"
+        android:label="CocktailDetailFragment" >
+        <action
+            android:id="@+id/action_cocktailDetailFragment_to_tabFragment"
+            app:destination="@id/tabFragment" />
+    </fragment>
 </navigation>
