@@ -11,6 +11,6 @@ abstract class CocktailDatabase : RoomDatabase() {
     abstract fun CocktailDao(): CocktailDao
 
     companion object {
-        val DATABASE_NAME: String = "drinks_db"
+        const val DATABASE_NAME: String = "drinks_db"
     }
 }

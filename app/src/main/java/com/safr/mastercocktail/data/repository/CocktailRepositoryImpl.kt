@@ -62,15 +62,12 @@ class CocktailRepositoryImpl @Inject constructor(
 
     //dao
 
-    override suspend fun getFavourites(): Flow<DataState<List<Drink>>> = flow {
+    override fun getFavourites(): Flow<DataState<List<Drink>>> {
         val bundle = Bundle()
         bundle.putString("function", "getFavourites")
         analytics.logEvent("repository_called", bundle)
-        emit(DataState.Loading)
-        val favourites = dao.getFavourites()
-        emit(DataState.Success(favourites))
-    }.catch { emit(DataState.Error(it)) }
-        .flowOn(Dispatchers.IO)
+        return dao.getFavourites()
+    }
 
     override suspend fun addToFavourites(cocktail: Drink) {
         val bundle = Bundle()

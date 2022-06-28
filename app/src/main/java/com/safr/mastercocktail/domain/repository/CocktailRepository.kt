@@ -17,7 +17,7 @@ interface CocktailRepository {
 
     suspend fun getCocktailDetails(cocktailId : Int): Flow<DataState<DetailListDrink>>
 
-    suspend fun getFavourites() : Flow<DataState<List<Drink>>>
+     fun getFavourites() : Flow<DataState<List<Drink>>>
 
     suspend fun addToFavourites(cocktail : Drink)
 

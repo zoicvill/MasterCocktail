@@ -42,16 +42,6 @@ class CocktailDetailViewModel @Inject constructor(
         get() = mutFavour
 
 
-//    fun start(id: Int) {
-//        idMut.value = id
-//        viewModelScope.launch {
-//            cocktailDetApi.getCocktailDetails(idMut.value ?: 0)
-//                .onEach { state -> mutListDrink.value = state }.launchIn(viewModelScope)
-//            checkDB.checkIfFavourite(idMut.value ?: 0)
-//                .onEach { state -> mutFavour.value = state }.launchIn(viewModelScope)
-//        }
-//    }
-
     fun start(id: Int, view: RelativeLayout) {
         idMut.value = id
         viewModelScope.launch {
@@ -73,13 +63,6 @@ class CocktailDetailViewModel @Inject constructor(
 
     }
 
-//
-//    fun addCocktailToFavourites(cocktail: DetailedDrink) =
-//        viewModelScope.launch { addDb.addToFavourites(Drink(cocktail)) }
-//
-//    fun removeCocktailFromFavourites(cocktail: DetailedDrink) =
-//        viewModelScope.launch { removeDb.removeFromFavourites(Drink(cocktail)) }
-
     fun addCocktailToFavourit(view: RelativeLayout) {
         viewModelScope.launch {
             cocktailDetApi.getCocktailDetails(idMut.value ?: 15346)
@@ -100,8 +83,11 @@ class CocktailDetailViewModel @Inject constructor(
                 .onEach { state ->
                     when (state) {
                         is DataState.Error -> DataState.Error(object : Error() {})
-                        DataState.Loading -> view.isVisible = false
-                        is DataState.Success -> removeDb.removeFromFavourites(Drink(state.data.drinks[0]))
+                        DataState.Loading -> view.isVisible = true
+                        is DataState.Success -> {
+                            removeDb.removeFromFavourites(Drink(state.data.drinks[0]))
+                            view.isVisible = false
+                        }
                     }
                 }.launchIn(viewModelScope)
         }

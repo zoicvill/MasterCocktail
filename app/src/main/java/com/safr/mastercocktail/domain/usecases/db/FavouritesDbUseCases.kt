@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class FavouritesDbUseCases @Inject constructor(private val rep: CocktailRepository)  {
-    suspend fun getFavourites(): Flow<DataState<List<Drink>>>{
+    fun getFavourites(): Flow<DataState<List<Drink>>>{
         return rep.getFavourites()
     }
 }
