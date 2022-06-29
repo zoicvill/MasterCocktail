@@ -9,14 +9,12 @@ import dagger.Provides
 import retrofit2.http.*
 
 interface ApiDataSource {
-    suspend fun getCocktails(type: String = "Cocktail") : Drinks
+//    suspend fun getCocktails(type: String = "Cocktail") : Drinks
+
+    suspend fun getCocktails() : Drinks
 
     suspend fun searchCocktails(type: String = "") : Drinks
 
     suspend fun getCocktailDetails(type: Int) : DetailListDrink
 
-    suspend fun addCocktail(cocktail: DetailedDrink): Int
-
-
-    suspend fun updateCocktail(cocktail: DetailedDrink) : Int
 }

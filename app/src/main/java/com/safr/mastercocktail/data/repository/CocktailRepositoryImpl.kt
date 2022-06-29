@@ -31,9 +31,9 @@ class CocktailRepositoryImpl @Inject constructor(
         val bundle = Bundle()
         bundle.putString("function", "getCocktails")
         analytics.logEvent("repository_called", bundle)
+
         emit(DataState.Loading)
-        val cocktail = api.getCocktails()
-        emit(DataState.Success(cocktail))
+        emit(DataState.Success(api.getCocktails()))
     }.catch { emit(DataState.Error(it)) }
         .flowOn(Dispatchers.IO)
 

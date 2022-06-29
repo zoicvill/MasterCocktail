@@ -9,8 +9,11 @@ import javax.inject.Singleton
 
 @Singleton
 class ApiDataSourceImpl @Inject constructor(private val api: CocktailApi) : ApiDataSource {
-    override suspend fun getCocktails(type: String): Drinks {
-        return api.getCocktails(type)
+//    override suspend fun getCocktails(type: String): Drinks {
+//        return api.getCocktails(type)
+//    }
+   override suspend fun getCocktails(): Drinks {
+        return api.getCocktails()
     }
 
     override suspend fun searchCocktails(type: String): Drinks {
@@ -19,13 +22,5 @@ class ApiDataSourceImpl @Inject constructor(private val api: CocktailApi) : ApiD
 
     override suspend fun getCocktailDetails(type: Int): DetailListDrink {
         return api.getCocktailDetails(type)
-    }
-
-    override suspend fun addCocktail(cocktail: DetailedDrink): Int {
-        return api.addCocktail(cocktail)
-    }
-
-    override suspend fun updateCocktail(cocktail: DetailedDrink): Int {
-        return api.updateCocktail(cocktail)
     }
 }

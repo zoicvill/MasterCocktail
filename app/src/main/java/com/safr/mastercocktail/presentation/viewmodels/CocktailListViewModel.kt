@@ -1,6 +1,7 @@
 package com.safr.mastercocktail.presentation.viewmodels
 
 import android.app.Application
+import android.widget.ProgressBar
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.core.view.isVisible
@@ -8,12 +9,14 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.safr.mastercocktail.core.DataState
 import com.safr.mastercocktail.data.local.model.Drink
 import com.safr.mastercocktail.data.local.model.Drinks
 import com.safr.mastercocktail.domain.usecases.api.GetCocktailsApiUseCases
 import com.safr.mastercocktail.domain.usecases.api.SearchCocktailsApiUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -37,11 +40,9 @@ class CocktailListViewModel @Inject constructor(
     val searchdataState: LiveData<List<Drink>>
         get() = searchdataStateMut
 
-    fun start(view: RelativeLayout) {
+    fun start(view: ProgressBar) {
         viewModelScope.launch {
-//            getCocktail.getCocktails().onEach { dataState -> dataStateMut.value = dataState }
-//                .launchIn(viewModelScope)
-            getCocktail.getCocktails().onEach { dataState ->
+            getCocktail.getCocktails().collect { dataState ->
                 when (dataState) {
                     is DataState.Error -> DataState.Error(object : Error() {})
                     DataState.Loading -> view.isVisible = true
@@ -51,19 +52,12 @@ class CocktailListViewModel @Inject constructor(
                     }
                 }
             }
-                .launchIn(viewModelScope)
         }
     }
 
-    fun search(name: String, view: RelativeLayout, textView: TextView) {
-//        viewModelScope.launch {
-//            searchCocktail.searchCocktails(name)
-//                .onEach { dataState -> searchdataStateMut.value = dataState }
-//                .launchIn(viewModelScope)
-//        }
+    fun search(name: String, view: ProgressBar, textView: TextView) {
         viewModelScope.launch {
-            searchCocktail.searchCocktails(name)
-                .onEach { dataState ->
+            searchCocktail.searchCocktails(name).onEach { dataState ->
                     when (dataState) {
                         is DataState.Error ->  DataState.Error(object : Error() {})
                         DataState.Loading -> view.isVisible = true

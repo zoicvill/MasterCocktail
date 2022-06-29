@@ -12,18 +12,20 @@
         app:cardCornerRadius="10dp"
         android:elevation="10dp"
         android:layout_margin="10dp">
+
         <Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:layout_alignParentTop="true">
+
             <SearchView
                 android:id="@+id/searchView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_margin="5dp"
                 android:iconifiedByDefault="false"
-                android:queryHint="Search"
-                android:layout_margin="5dp"/>
+                android:queryHint="Search" />
         </Toolbar>
     </androidx.cardview.widget.CardView>
 
@@ -45,9 +47,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/searchCard"
-        app:layoutManager="LinearLayoutManager"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         android:requiresFadingEdge="vertical"
-        tools:listitem="@layout/cocktail_list_item"
+        tools:listitem="@layout/item_list_cocktail"
         android:layout_margin="20dp"/>
     <RelativeLayout
         android:id="@+id/progressBarHolder"

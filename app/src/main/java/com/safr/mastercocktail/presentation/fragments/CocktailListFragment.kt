@@ -1,6 +1,7 @@
 package com.safr.mastercocktail.presentation.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +17,7 @@ import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
 import com.safr.mastercocktail.R
 import com.safr.mastercocktail.data.local.model.Drink
+import com.safr.mastercocktail.databinding.FrCocktailListBinding
 import com.safr.mastercocktail.databinding.FragmentCocktailListBinding
 import com.safr.mastercocktail.presentation.adapters.DrinkRecyclerViewAdapter
 import com.safr.mastercocktail.presentation.adapters.FavDrinkRecyclerViewAdapter
@@ -26,14 +28,14 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class CocktailListFragment : Fragment(), DrinkRecyclerViewAdapter.DrinkListClickListener {
-    private var binding: FragmentCocktailListBinding? = null
+
+//    private var binding: FragmentCocktailListBinding? = null
+    private var binding: FrCocktailListBinding? = null
     private val mBinding get() = binding!!
 
     private val viewModel: CocktailListViewModel by viewModels()
 
     private lateinit var analytics: FirebaseAnalytics
-
-    private var columnCount = 2
 
     @Inject
     lateinit var mAdapter: DrinkRecyclerViewAdapter
@@ -50,7 +52,8 @@ class CocktailListFragment : Fragment(), DrinkRecyclerViewAdapter.DrinkListClick
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentCocktailListBinding.inflate(layoutInflater)
+//        binding = FragmentCocktailListBinding.inflate(layoutInflater)
+        binding = FrCocktailListBinding.inflate(layoutInflater)
         return mBinding.root
     }
 
@@ -59,7 +62,6 @@ class CocktailListFragment : Fragment(), DrinkRecyclerViewAdapter.DrinkListClick
         createAdapter()
         viewModel.start(mBinding.progressBarHolder)
         subscribeObservers()
-
         searchView()
     }
 
@@ -97,18 +99,21 @@ class CocktailListFragment : Fragment(), DrinkRecyclerViewAdapter.DrinkListClick
         })
     }
 
-    private fun setupRecyclerView(drinks: List<Drink>) = mBinding.run {
-        mAdapter.setList(drinks, this@CocktailListFragment)
-    }
 
     private fun createAdapter() {
         mBinding.list.apply {
             setHasFixedSize(true)
             itemAnimator = DefaultItemAnimator()
             adapter = mAdapter
-            layoutManager = GridLayoutManager(context, columnCount)
+//            layoutManager = GridLayoutManager(context, columnCount)
         }
     }
+
+    private fun setupRecyclerView(drinks: List<Drink>) = mBinding.run {
+//        Log.d("lol", "${drinks[0]}")
+        mAdapter.setList(drinks, this@CocktailListFragment)
+    }
+
 
     override fun onClickDrinkList(drinkId: Int) {
         val bundle = bundleOf("drinkId" to drinkId)

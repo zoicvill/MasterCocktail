@@ -11,6 +11,8 @@ data class Drink (
     var strDrink: String,
     @SerializedName("strDrinkThumb")
     var strDrinkThumb: String,
+    @SerializedName("strGlass")
+    var strGlass: String,
     @SerializedName("idDrink")
     @PrimaryKey
     var idDrink: Int
@@ -18,7 +20,8 @@ data class Drink (
     constructor(detailedDrink: DetailedDrink) : this(
         strDrink = detailedDrink.strDrink,
         strDrinkThumb = detailedDrink.strDrinkThumb,
-        idDrink = detailedDrink.idDrink
+        idDrink = detailedDrink.idDrink,
+        strGlass = detailedDrink.strGlass
     )
 
 }
