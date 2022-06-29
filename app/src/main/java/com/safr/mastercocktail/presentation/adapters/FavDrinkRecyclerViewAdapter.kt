@@ -4,17 +4,18 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.safr.mastercocktail.data.local.model.Drink
 import com.safr.mastercocktail.databinding.CocktailListItemBinding
 
-class MyFavDrinkRecyclerViewAdapter(
-    private val values: List<Drink>, private val onClick: DrinkListClickListener
-) : RecyclerView.Adapter<MyFavDrinkRecyclerViewAdapter.ViewHolder>() {
+class FavDrinkRecyclerViewAdapter() : RecyclerView.Adapter<FavDrinkRecyclerViewAdapter.ViewHolder>() {
+
+    private var values = ArrayList<Drink>()
+    private lateinit var onClick: DrinkListClickListener
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-
         return ViewHolder(
             CocktailListItemBinding.inflate(
                 LayoutInflater.from(parent.context),
@@ -22,6 +23,16 @@ class MyFavDrinkRecyclerViewAdapter(
                 false
             )
         )
+    }
+
+    fun setList(valuesSet: List<Drink>, onClickSet: DrinkListClickListener){
+        val diffCallback = DiffCallback(values, valuesSet)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
+        values.clear()
+        values.addAll(valuesSet)
+        onClick = onClickSet
+        diffResult.dispatchUpdatesTo(this)
+
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {

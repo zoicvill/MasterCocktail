@@ -10,21 +10,24 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
+import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
 import com.safr.mastercocktail.R
 import com.safr.mastercocktail.data.local.model.Drink
 import com.safr.mastercocktail.databinding.FragmentFavCocktailListBinding
-import com.safr.mastercocktail.presentation.adapters.MyFavDrinkRecyclerViewAdapter
+import com.safr.mastercocktail.presentation.adapters.FavDrinkRecyclerViewAdapter
 import com.safr.mastercocktail.presentation.viewmodels.FavCocktailListViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_fav_cocktail_list.*
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class FavCocktailListFragment : Fragment(), MyFavDrinkRecyclerViewAdapter.DrinkListClickListener {
+class FavCocktailListFragment : Fragment(), FavDrinkRecyclerViewAdapter.DrinkListClickListener {
 
     private val viewModel: FavCocktailListViewModel by viewModels()
 
@@ -32,6 +35,9 @@ class FavCocktailListFragment : Fragment(), MyFavDrinkRecyclerViewAdapter.DrinkL
 
     private var columnCount = 2
 
+
+    @Inject
+    lateinit var mAdapter: FavDrinkRecyclerViewAdapter
 
     private var binding: FragmentFavCocktailListBinding? = null
     private val mBinding get() = binding!!
@@ -48,7 +54,7 @@ class FavCocktailListFragment : Fragment(), MyFavDrinkRecyclerViewAdapter.DrinkL
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentFavCocktailListBinding.inflate(layoutInflater)
         return mBinding.root
     }
@@ -61,6 +67,7 @@ class FavCocktailListFragment : Fragment(), MyFavDrinkRecyclerViewAdapter.DrinkL
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) = mBinding.run {
         super.onViewCreated(view, savedInstanceState)
+        createAdapter()
         viewModel.run(progressBarHolder, no_fav_cocktail_title)
         subscribeObservers()
     }
@@ -73,9 +80,17 @@ class FavCocktailListFragment : Fragment(), MyFavDrinkRecyclerViewAdapter.DrinkL
         }
     }
 
+    private fun createAdapter() {
+        mBinding.list.apply {
+            setHasFixedSize(true)
+            itemAnimator = DefaultItemAnimator()
+            adapter = mAdapter
+            layoutManager = GridLayoutManager(context, columnCount)
+        }
+    }
+
     private fun setupRecyclerView(drinks: List<Drink>) = mBinding.run {
-        list.layoutManager = GridLayoutManager(context, columnCount)
-        list.adapter = MyFavDrinkRecyclerViewAdapter(drinks, this@FavCocktailListFragment)
+        mAdapter.setList(drinks, this@FavCocktailListFragment)
     }
 
     override fun onClickDrinkList(drinkId: Int) {

@@ -9,6 +9,7 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
+import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
@@ -16,13 +17,15 @@ import com.google.firebase.ktx.Firebase
 import com.safr.mastercocktail.R
 import com.safr.mastercocktail.data.local.model.Drink
 import com.safr.mastercocktail.databinding.FragmentCocktailListBinding
-import com.safr.mastercocktail.presentation.adapters.MyDrinkRecyclerViewAdapter
+import com.safr.mastercocktail.presentation.adapters.DrinkRecyclerViewAdapter
+import com.safr.mastercocktail.presentation.adapters.FavDrinkRecyclerViewAdapter
 import com.safr.mastercocktail.presentation.viewmodels.CocktailListViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_cocktail_list.*
+import javax.inject.Inject
 
 @AndroidEntryPoint
-class CocktailListFragment : Fragment(), MyDrinkRecyclerViewAdapter.DrinkListClickListener {
+class CocktailListFragment : Fragment(), DrinkRecyclerViewAdapter.DrinkListClickListener {
     private var binding: FragmentCocktailListBinding? = null
     private val mBinding get() = binding!!
 
@@ -31,6 +34,9 @@ class CocktailListFragment : Fragment(), MyDrinkRecyclerViewAdapter.DrinkListCli
     private lateinit var analytics: FirebaseAnalytics
 
     private var columnCount = 2
+
+    @Inject
+    lateinit var mAdapter: DrinkRecyclerViewAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,7 +56,7 @@ class CocktailListFragment : Fragment(), MyDrinkRecyclerViewAdapter.DrinkListCli
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        createAdapter()
         viewModel.start(mBinding.progressBarHolder)
         subscribeObservers()
 
@@ -92,8 +98,16 @@ class CocktailListFragment : Fragment(), MyDrinkRecyclerViewAdapter.DrinkListCli
     }
 
     private fun setupRecyclerView(drinks: List<Drink>) = mBinding.run {
-        list.layoutManager = GridLayoutManager(context, columnCount)
-        list.adapter = MyDrinkRecyclerViewAdapter(drinks, this@CocktailListFragment)
+        mAdapter.setList(drinks, this@CocktailListFragment)
+    }
+
+    private fun createAdapter() {
+        mBinding.list.apply {
+            setHasFixedSize(true)
+            itemAnimator = DefaultItemAnimator()
+            adapter = mAdapter
+            layoutManager = GridLayoutManager(context, columnCount)
+        }
     }
 
     override fun onClickDrinkList(drinkId: Int) {

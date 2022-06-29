@@ -34,16 +34,8 @@ class FavCocktailListViewModel @Inject constructor(
     val favourites: LiveData<List<Drink>>
         get() = dataStateMut
 
-    //    init {
-//        run()
-//    }
-//
     fun run(view: RelativeLayout, textView: TextView) {
         viewModelScope.launch {
-//            favour.getFavourites().flowOn(Dispatchers.IO).onEach { dataState ->
-//                dataStateMut.value = dataState
-//            }.launchIn(viewModelScope)
-
             favour.getFavourites().flowOn(Dispatchers.IO).onEach { dataState ->
                 when (dataState) {
                     is DataState.Error -> DataState.Error(object : Error() {})
