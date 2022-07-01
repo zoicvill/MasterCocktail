@@ -11,16 +11,15 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.DefaultItemAnimator
-import androidx.recyclerview.widget.GridLayoutManager
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
 import com.safr.mastercocktail.R
-import com.safr.mastercocktail.data.local.model.Drink
-import com.safr.mastercocktail.databinding.FrCocktailListBinding
 import com.safr.mastercocktail.databinding.FragmentCocktailListBinding
+import com.safr.mastercocktail.domain.model.api.DetailedDrinkNet
+import com.safr.mastercocktail.domain.model.api.DrinkNet
+import com.safr.mastercocktail.presentation.adapters.DiffCallback
 import com.safr.mastercocktail.presentation.adapters.DrinkRecyclerViewAdapter
-import com.safr.mastercocktail.presentation.adapters.FavDrinkRecyclerViewAdapter
 import com.safr.mastercocktail.presentation.viewmodels.CocktailListViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_cocktail_list.*
@@ -29,8 +28,8 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class CocktailListFragment : Fragment(), DrinkRecyclerViewAdapter.DrinkListClickListener {
 
-//    private var binding: FragmentCocktailListBinding? = null
-    private var binding: FrCocktailListBinding? = null
+    private var binding: FragmentCocktailListBinding? = null
+//    private var binding: FrCocktailListBinding? = null
     private val mBinding get() = binding!!
 
     private val viewModel: CocktailListViewModel by viewModels()
@@ -52,8 +51,8 @@ class CocktailListFragment : Fragment(), DrinkRecyclerViewAdapter.DrinkListClick
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-//        binding = FragmentCocktailListBinding.inflate(layoutInflater)
-        binding = FrCocktailListBinding.inflate(layoutInflater)
+        binding = FragmentCocktailListBinding.inflate(layoutInflater)
+//        binding = FrCocktailListBinding.inflate(layoutInflater)
         return mBinding.root
     }
 
@@ -109,9 +108,19 @@ class CocktailListFragment : Fragment(), DrinkRecyclerViewAdapter.DrinkListClick
         }
     }
 
-    private fun setupRecyclerView(drinks: List<Drink>) = mBinding.run {
-//        Log.d("lol", "${drinks[0]}")
-        mAdapter.setList(drinks, this@CocktailListFragment)
+    private fun setupRecyclerView(drinkDataLocalMods: List<DrinkNet>) = mBinding.run {
+        Log.d("lol setupRecyclerView CocktailListFragment", "${drinkDataLocalMods[0]}")
+        val diffCallback = object : DiffCallback<DrinkNet>() {
+            override fun areItemsTheSame(oldItem: DrinkNet, newItem: DrinkNet): Boolean {
+                return oldItem.idDrink == newItem.idDrink
+            }
+
+            override fun areContentsTheSame(oldItem: DrinkNet, newItem: DrinkNet): Boolean {
+                return oldItem == newItem
+            }
+
+        }
+        mAdapter.setList(drinkDataLocalMods, this@CocktailListFragment, diffCallback)
     }
 
 

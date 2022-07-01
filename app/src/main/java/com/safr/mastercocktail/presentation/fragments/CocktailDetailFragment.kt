@@ -14,8 +14,8 @@ import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
 import com.safr.mastercocktail.R
 import com.safr.mastercocktail.core.DataState
-import com.safr.mastercocktail.data.network.model.DetailedDrink
 import com.safr.mastercocktail.databinding.FragmentCocktailDetailBinding
+import com.safr.mastercocktail.domain.model.api.DetailedDrinkNet
 import com.safr.mastercocktail.presentation.viewmodels.CocktailDetailViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_cocktail_detail.*
@@ -124,7 +124,7 @@ class CocktailDetailFragment : Fragment() {
         }
     }
 
-    private fun displayData(cocktail: DetailedDrink) {
+    private fun displayData(cocktail: DetailedDrinkNet) {
         cocktail_name.text = cocktail.strDrink
         Glide.with(this)
             .load(cocktail.strDrinkThumb)

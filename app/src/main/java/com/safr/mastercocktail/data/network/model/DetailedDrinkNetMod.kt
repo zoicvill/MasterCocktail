@@ -1,9 +1,12 @@
 package com.safr.mastercocktail.data.network.model
 
-data class DetailedDrink (
+import com.safr.mastercocktail.Mapper1
+import com.safr.mastercocktail.domain.model.api.DetailedDrinkNet
+
+data class DetailedDrinkNetMod(
     var idDrink: Int = 0,
     var strDrink: String = "",
-    val strDrinkAlternate: String= "",
+    val strDrinkAlternate: String = "",
     val strTags: String = "",
     val strVideo: String = "",
     val strCategory: String = "",
@@ -50,4 +53,21 @@ data class DetailedDrink (
     val strImageAttribution: String = "",
     val strCreativeCommonsConfirmed: String = "",
     val dateModified: String = ""
-)
+) : Mapper1<DetailedDrinkNet> {
+    override fun to(): DetailedDrinkNet {
+        return DetailedDrinkNet(
+            idDrink,
+            strDrink,
+            strCategory,
+            strAlcoholic,
+            strGlass,
+            strInstructions,
+            strDrinkThumb,
+            strIngredient1,
+            strIngredient2,
+            strIngredient3,
+            strIngredient4,
+            strImageSource,
+        )
+    }
+}

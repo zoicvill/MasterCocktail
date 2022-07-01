@@ -1,15 +1,16 @@
 package com.safr.mastercocktail.data.repository
 
 import android.os.Bundle
+import android.util.Log
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
 import com.safr.mastercocktail.core.DataState
 import com.safr.mastercocktail.data.local.datasourse.LocalDataSource
-import com.safr.mastercocktail.data.local.model.Drink
-import com.safr.mastercocktail.data.local.model.Drinks
 import com.safr.mastercocktail.data.network.datasourse.ApiDataSource
-import com.safr.mastercocktail.data.network.model.DetailListDrink
+import com.safr.mastercocktail.domain.model.api.DetailListDrinkNet
+import com.safr.mastercocktail.domain.model.api.DrinkListNet
+import com.safr.mastercocktail.domain.model.data.DrinkData
 import com.safr.mastercocktail.domain.repository.CocktailRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -27,7 +28,7 @@ class CocktailRepositoryImpl @Inject constructor(
 
     private var analytics: FirebaseAnalytics = Firebase.analytics
 
-    override suspend fun getCocktails(): Flow<DataState<Drinks>> = flow {
+    override suspend fun getCocktails(): Flow<DataState<DrinkListNet>> = flow {
         val bundle = Bundle()
         bundle.putString("function", "getCocktails")
         analytics.logEvent("repository_called", bundle)
@@ -37,7 +38,7 @@ class CocktailRepositoryImpl @Inject constructor(
     }.catch { emit(DataState.Error(it)) }
         .flowOn(Dispatchers.IO)
 
-    override suspend fun searchCocktails(name: String): Flow<DataState<Drinks>> = flow {
+    override suspend fun searchCocktails(name: String): Flow<DataState<DrinkListNet>> = flow {
         val bundle = Bundle()
         bundle.putString("function", "searchCocktails")
         analytics.logEvent("repository_called", bundle)
@@ -48,7 +49,7 @@ class CocktailRepositoryImpl @Inject constructor(
     }.catch { emit(DataState.Error(it)) }
         .flowOn(Dispatchers.IO)
 
-    override suspend fun getCocktailDetails(cocktailId: Int): Flow<DataState<DetailListDrink>> =
+    override suspend fun getCocktailDetails(cocktailId: Int): Flow<DataState<DetailListDrinkNet>> =
         flow {
             val bundle = Bundle()
             bundle.putString("function", "getCocktailDetails")
@@ -62,37 +63,33 @@ class CocktailRepositoryImpl @Inject constructor(
 
     //dao
 
-    override fun getFavourites(): Flow<DataState<List<Drink>>> {
+    override fun getFavourites(): Flow<DataState<List<DrinkData>>> {
         val bundle = Bundle()
         bundle.putString("function", "getFavourites")
         analytics.logEvent("repository_called", bundle)
         return dao.getFavourites()
     }
 
-    override suspend fun addToFavourites(cocktail: Drink) {
+    override suspend fun addToFavourites(cocktail: DrinkData) {
         val bundle = Bundle()
         bundle.putString("function", "addToFavourites")
         analytics.logEvent("repository_called", bundle)
         dao.insert(cocktail)
     }
 
-    override suspend fun removeFromFavourites(cocktail: Drink) {
+    override suspend fun removeFromFavourites(cocktail: DrinkData) {
         val bundle = Bundle()
         bundle.putString("function", "removeFromFavourites")
         analytics.logEvent("repository_called", bundle)
         dao.remove(cocktail)
     }
 
-    override suspend fun checkIfFavourite(id: Int): Flow<DataState<Boolean>> = flow {
+    override suspend fun checkIfFavourite(id: Int): Flow<DataState<Boolean>> {
         val bundle = Bundle()
         bundle.putString("function", "checkIfFavourite")
         analytics.logEvent("repository_called", bundle)
-        emit(DataState.Loading)
-        val isFavourite = dao.isFavourite(id)
-        emit(DataState.Success(isFavourite))
-
-    }.catch { emit(DataState.Error(it)) }
-        .flowOn(Dispatchers.IO)
+        return dao.isFavourite(id)
+    }
 
 
 }

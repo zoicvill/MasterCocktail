@@ -12,13 +12,13 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
 import com.safr.mastercocktail.R
-import com.safr.mastercocktail.data.local.model.Drink
 import com.safr.mastercocktail.databinding.FragmentFavCocktailListBinding
+import com.safr.mastercocktail.domain.model.data.DrinkData
+import com.safr.mastercocktail.presentation.adapters.DiffCallback
 import com.safr.mastercocktail.presentation.adapters.FavDrinkRecyclerViewAdapter
 import com.safr.mastercocktail.presentation.viewmodels.FavCocktailListViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -89,8 +89,18 @@ class FavCocktailListFragment : Fragment(), FavDrinkRecyclerViewAdapter.DrinkLis
         }
     }
 
-    private fun setupRecyclerView(drinks: List<Drink>) = mBinding.run {
-        mAdapter.setList(drinks, this@FavCocktailListFragment)
+    private fun setupRecyclerView(drinkDataLocalMods: List<DrinkData>) = mBinding.run {
+        val diffCallback = object : DiffCallback<DrinkData>() {
+            override fun areItemsTheSame(oldItem: DrinkData, newItem: DrinkData): Boolean {
+                return oldItem.idDrink == newItem.idDrink
+            }
+
+            override fun areContentsTheSame(oldItem: DrinkData, newItem: DrinkData): Boolean {
+                return oldItem == newItem
+            }
+
+        }
+        mAdapter.setList(drinkDataLocalMods, this@FavCocktailListFragment, diffCallback)
     }
 
     override fun onClickDrinkList(drinkId: Int) {

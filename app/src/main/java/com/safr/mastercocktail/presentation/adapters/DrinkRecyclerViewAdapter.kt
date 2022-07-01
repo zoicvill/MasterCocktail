@@ -1,19 +1,19 @@
 package com.safr.mastercocktail.presentation.adapters
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.safr.mastercocktail.data.local.model.Drink
-import com.safr.mastercocktail.databinding.CocktailItemBinding
 import com.safr.mastercocktail.databinding.ItemListCocktailBinding
-import kotlinx.android.synthetic.main.cocktail_item.view.*
+import com.safr.mastercocktail.domain.model.api.DetailedDrinkNet
+import com.safr.mastercocktail.domain.model.api.DrinkNet
+import com.safr.mastercocktail.domain.model.data.DrinkData
 
-class DrinkRecyclerViewAdapter() : RecyclerView.Adapter<DrinkRecyclerViewAdapter.ViewHolder>() {
+class DrinkRecyclerViewAdapter : RecyclerView.Adapter<DrinkRecyclerViewAdapter.ViewHolder>() {
 
-    private var values = ArrayList<Drink>()
+    private var mValues = ArrayList<DrinkNet>()
+    private var mOldValues = ArrayList<DrinkNet>()
     private lateinit var onClick: DrinkListClickListener
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -27,18 +27,61 @@ class DrinkRecyclerViewAdapter() : RecyclerView.Adapter<DrinkRecyclerViewAdapter
     }
 
 
-    fun setList(valuesSet: List<Drink>, onClickSet: DrinkListClickListener) {
-        val diffCallback = DiffCallback(values, valuesSet)
-        val diffResult = DiffUtil.calculateDiff(diffCallback)
-        values.clear()
-        values.addAll(valuesSet)
+    fun setList(
+        valuesSet: List<DrinkNet>, onClickSet: DrinkListClickListener,
+        diffCallback: DiffCallback<DrinkNet>
+    ) {
+
+            mValues.clear()
+            mValues.addAll(valuesSet)
+            notifyDataSetChanged()
+
+        mOldValues.clear()
+        mOldValues.addAll(mValues)
+
         onClick = onClickSet
+//        val diffCallback = DiffCallback(values, valuesSet)
+//        val diffResult = DiffUtil.calculateDiff(diffCallback)
+//        diffResult.dispatchUpdatesTo(this)
+
+        val diffResult: DiffUtil.DiffResult = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
+            override fun getOldListSize(): Int {
+                return mOldValues.size
+            }
+
+            override fun getNewListSize(): Int {
+                return mValues.size
+            }
+
+            override fun getChangePayload(oldItemPosition: Int, newItemPosition: Int): Any? {
+                return diffCallback.areItemsTheSame(
+                    mOldValues[oldItemPosition],
+                    mValues[newItemPosition]
+                )
+            }
+
+
+            override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+                return diffCallback.areItemsTheSame(
+                    mOldValues[oldItemPosition],
+                    mValues[newItemPosition]
+                )
+            }
+
+            override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+                return diffCallback.areContentsTheSame(
+                    mOldValues[oldItemPosition],
+                    mValues[newItemPosition]
+                )
+            }
+
+        })
         diffResult.dispatchUpdatesTo(this)
 
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-//        val item = values[position]
+//        val item = mValues[position]
         holder.bind(position)
 //        holder.itemView.setOnClickListener {
 //            onClick.onClickDrinkList(item.idDrink)
@@ -49,24 +92,23 @@ class DrinkRecyclerViewAdapter() : RecyclerView.Adapter<DrinkRecyclerViewAdapter
 //            .into(holder.drinkImage)
     }
 
-    override fun getItemCount(): Int = values.size
+    override fun getItemCount(): Int = mValues.size
 
     inner class ViewHolder(private val view: ItemListCocktailBinding) :
         RecyclerView.ViewHolder(view.root) {
 
         fun bind(item: Int) = view.apply {
-//            itemView.setOnClickListener { onClick.onClickDrinkList(values[item].idDrink) }
+//            itemView.setOnClickListener { onClick.onClickDrinkList(mValues[item].idDrink) }
 
 //            holder.titleTv.text = item.strDrink
-            drinkName.text = values[item].strDrink
-            drinkGlass.text = values[item].strGlass
+            drinkName.text = mValues[item].strDrink
             Glide.with(itemView.context)
-                .load(values[item].strDrinkThumb)
+                .load(mValues[item].strDrinkThumb)
                 .into(drinkImg)
 
             root.apply {
                 setOnClickListener {
-                    onClick.onClickDrinkList(values[item].idDrink)
+                    onClick.onClickDrinkList(mValues[item].idDrink)
                 }
             }
         }

@@ -10,8 +10,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.safr.mastercocktail.core.DataState
-import com.safr.mastercocktail.data.local.model.Drink
-import com.safr.mastercocktail.data.network.model.DetailedDrink
+import com.safr.mastercocktail.domain.model.api.DetailedDrinkNet
+import com.safr.mastercocktail.domain.model.data.DrinkData
 import com.safr.mastercocktail.domain.usecases.api.CocktailDetailsApiUseCases
 import com.safr.mastercocktail.domain.usecases.db.AddFavouritesDbUseCases
 import com.safr.mastercocktail.domain.usecases.db.CheckFavouriteUseCases
@@ -33,8 +33,8 @@ class CocktailDetailViewModel @Inject constructor(
 
     private val idMut = MutableLiveData<Int>()
 
-    private val mutListDrink: MutableLiveData<DetailedDrink> = MutableLiveData()
-    val detailListDrink: LiveData<DetailedDrink>
+    private val mutListDrink: MutableLiveData<DetailedDrinkNet> = MutableLiveData()
+    val detailListDrink: LiveData<DetailedDrinkNet>
         get() = mutListDrink
 
     private val mutFavour: MutableLiveData<DataState<Boolean>> = MutableLiveData()
@@ -70,7 +70,7 @@ class CocktailDetailViewModel @Inject constructor(
                     when (state) {
                         is DataState.Error -> DataState.Error(object : Error() {})
                         DataState.Loading -> view.isVisible = false
-                        is DataState.Success -> addDb.addToFavourites(Drink(state.data.drinks[0]))
+                        is DataState.Success -> addDb.addToFavourites(DrinkData(state.data.drinks[0]))
                     }
                 }.launchIn(viewModelScope)
         }
@@ -85,7 +85,7 @@ class CocktailDetailViewModel @Inject constructor(
                         is DataState.Error -> DataState.Error(object : Error() {})
                         DataState.Loading -> view.isVisible = true
                         is DataState.Success -> {
-                            removeDb.removeFromFavourites(Drink(state.data.drinks[0]))
+                            removeDb.removeFromFavourites(DrinkData(state.data.drinks[0]))
                             view.isVisible = false
                         }
                     }

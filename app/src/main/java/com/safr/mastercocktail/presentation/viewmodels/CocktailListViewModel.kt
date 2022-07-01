@@ -1,7 +1,7 @@
 package com.safr.mastercocktail.presentation.viewmodels
 
 import android.app.Application
-import android.widget.ProgressBar
+import android.util.Log
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.core.view.isVisible
@@ -9,10 +9,10 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.safr.mastercocktail.core.DataState
-import com.safr.mastercocktail.data.local.model.Drink
-import com.safr.mastercocktail.data.local.model.Drinks
+import com.safr.mastercocktail.domain.model.api.DetailedDrinkNet
+import com.safr.mastercocktail.domain.model.api.DrinkListNet
+import com.safr.mastercocktail.domain.model.api.DrinkNet
 import com.safr.mastercocktail.domain.usecases.api.GetCocktailsApiUseCases
 import com.safr.mastercocktail.domain.usecases.api.SearchCocktailsApiUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,17 +30,19 @@ class CocktailListViewModel @Inject constructor(
 ) : AndroidViewModel(application) {
 
 
-    private val dataStateMut: MutableLiveData<List<Drink>> = MutableLiveData()
+    private val dataStateMut: MutableLiveData<List<DrinkNet>> = MutableLiveData()
 
-    val getCocktailState: LiveData<List<Drink>>
+    val getCocktailState: LiveData<List<DrinkNet>>
         get() = dataStateMut
 
-    private val searchdataStateMut: MutableLiveData<List<Drink>> = MutableLiveData()
+    private val searchdataStateMut: MutableLiveData<List<DrinkNet>> = MutableLiveData()
 
-    val searchdataState: LiveData<List<Drink>>
+    val searchdataState: LiveData<List<DrinkNet>>
         get() = searchdataStateMut
 
-    fun start(view: ProgressBar) {
+    fun start(
+        view: RelativeLayout
+    ) {
         viewModelScope.launch {
             getCocktail.getCocktails().collect { dataState ->
                 when (dataState) {
@@ -55,19 +57,23 @@ class CocktailListViewModel @Inject constructor(
         }
     }
 
-    fun search(name: String, view: ProgressBar, textView: TextView) {
+    fun search(
+        name: String, view:
+        RelativeLayout, textView: TextView
+    ) {
         viewModelScope.launch {
             searchCocktail.searchCocktails(name).onEach { dataState ->
-                    when (dataState) {
-                        is DataState.Error ->  DataState.Error(object : Error() {})
-                        DataState.Loading -> view.isVisible = true
-                        is DataState.Success -> {
-                            view.isVisible = false
-                            textView.isVisible = false
-                            searchdataStateMut.value = dataState.data.drinks
-                        }
+                when (dataState) {
+                    is DataState.Error -> DataState.Error(object : Error() {})
+                    DataState.Loading -> view.isVisible = true
+                    is DataState.Success -> {
+                        view.isVisible = false
+                        textView.isVisible = false
+                        searchdataStateMut.value = dataState.data.drinks
+                        Log.d("lol", "CocktailListViewModel search ${dataState.data.drinks[0]}")
                     }
                 }
+            }
                 .launchIn(viewModelScope)
         }
     }

@@ -2,7 +2,6 @@ package com.safr.mastercocktail.presentation.viewmodels
 
 import android.app.Application
 import android.util.Log
-import android.view.View
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.core.view.isVisible
@@ -11,10 +10,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.safr.mastercocktail.core.DataState
-import com.safr.mastercocktail.data.local.model.Drink
+import com.safr.mastercocktail.data.local.model.DrinkDataLocalMod
+import com.safr.mastercocktail.domain.model.data.DrinkData
 import com.safr.mastercocktail.domain.usecases.db.FavouritesDbUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.android.synthetic.main.fragment_fav_cocktail_list.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
@@ -29,9 +28,9 @@ class FavCocktailListViewModel @Inject constructor(
 ) :
     AndroidViewModel(application) {
 
-    private val dataStateMut: MutableLiveData<List<Drink>> = MutableLiveData()
+    private val dataStateMut: MutableLiveData<List<DrinkData>> = MutableLiveData()
 
-    val favourites: LiveData<List<Drink>>
+    val favourites: LiveData<List<DrinkData>>
         get() = dataStateMut
 
     fun run(view: RelativeLayout, textView: TextView) {

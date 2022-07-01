@@ -1,19 +1,19 @@
 package com.safr.mastercocktail.data.local.dao
 
 import androidx.room.*
-import com.safr.mastercocktail.data.local.model.Drink
+import com.safr.mastercocktail.data.local.model.DrinkDataLocalMod
 
 @Dao
 interface CocktailDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(cocktail: Drink) : Long
+    suspend fun insert(cocktail: DrinkDataLocalMod) : Long
 
-    @Query("SELECT * FROM drinks")
-    suspend fun getFavourites() : List<Drink>
+    @Query("SELECT * FROM drinkDataLocalMods")
+    suspend fun getFavourites() : List<DrinkDataLocalMod>
 
     @Delete
-    suspend fun remove(cocktail: Drink)
+    suspend fun remove(cocktail: DrinkDataLocalMod)
 
-    @Query("SELECT EXISTS(SELECT * FROM drinks WHERE idDrink = :id)")
+    @Query("SELECT EXISTS(SELECT * FROM drinkDataLocalMods WHERE idDrink = :id)")
     suspend fun isFavourite(id : Int) : Boolean
 }
