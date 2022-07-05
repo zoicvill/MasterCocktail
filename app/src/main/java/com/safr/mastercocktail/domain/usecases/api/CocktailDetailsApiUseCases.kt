@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class CocktailDetailsApiUseCases @Inject constructor(private val rep: CocktailRepository) {
-    suspend fun getCocktailDetails(cocktailId: Int): Flow<DataState<DetailListDrinkNet>> {
+    suspend fun getCocktailDetails(cocktailId: Int): Flow<DataState<DetailListDrinkNet?>> {
         return rep.getCocktailDetails(cocktailId)
     }
 }

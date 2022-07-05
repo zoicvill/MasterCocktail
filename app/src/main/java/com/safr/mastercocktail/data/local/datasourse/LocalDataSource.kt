@@ -5,7 +5,7 @@ import com.safr.mastercocktail.domain.model.data.DrinkData
 import kotlinx.coroutines.flow.Flow
 
 interface LocalDataSource {
-    suspend fun insert(cocktail: DrinkData): Long
+    suspend fun insert(cocktail: DrinkData): Long?
 
     fun getFavourites(): Flow<DataState<List<DrinkData>>>
 

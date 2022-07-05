@@ -6,9 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.safr.mastercocktail.databinding.ItemListCocktailBinding
-import com.safr.mastercocktail.domain.model.api.DetailedDrinkNet
 import com.safr.mastercocktail.domain.model.api.DrinkNet
-import com.safr.mastercocktail.domain.model.data.DrinkData
 
 class DrinkRecyclerViewAdapter : RecyclerView.Adapter<DrinkRecyclerViewAdapter.ViewHolder>() {
 
@@ -32,9 +30,9 @@ class DrinkRecyclerViewAdapter : RecyclerView.Adapter<DrinkRecyclerViewAdapter.V
         diffCallback: DiffCallback<DrinkNet>
     ) {
 
-            mValues.clear()
-            mValues.addAll(valuesSet)
-            notifyDataSetChanged()
+        mValues.clear()
+        mValues.addAll(valuesSet)
+        notifyDataSetChanged()
 
         mOldValues.clear()
         mOldValues.addAll(mValues)
@@ -54,7 +52,7 @@ class DrinkRecyclerViewAdapter : RecyclerView.Adapter<DrinkRecyclerViewAdapter.V
             }
 
             override fun getChangePayload(oldItemPosition: Int, newItemPosition: Int): Any? {
-                return diffCallback.areItemsTheSame(
+                return diffCallback.getChangePayload(
                     mOldValues[oldItemPosition],
                     mValues[newItemPosition]
                 )
@@ -81,15 +79,7 @@ class DrinkRecyclerViewAdapter : RecyclerView.Adapter<DrinkRecyclerViewAdapter.V
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-//        val item = mValues[position]
         holder.bind(position)
-//        holder.itemView.setOnClickListener {
-//            onClick.onClickDrinkList(item.idDrink)
-//        }
-//        holder.titleTv.text = item.strDrink
-//        Glide.with(holder.itemView.context)
-//            .load(item.strDrinkThumb)
-//            .into(holder.drinkImage)
     }
 
     override fun getItemCount(): Int = mValues.size
@@ -98,9 +88,6 @@ class DrinkRecyclerViewAdapter : RecyclerView.Adapter<DrinkRecyclerViewAdapter.V
         RecyclerView.ViewHolder(view.root) {
 
         fun bind(item: Int) = view.apply {
-//            itemView.setOnClickListener { onClick.onClickDrinkList(mValues[item].idDrink) }
-
-//            holder.titleTv.text = item.strDrink
             drinkName.text = mValues[item].strDrink
             Glide.with(itemView.context)
                 .load(mValues[item].strDrinkThumb)

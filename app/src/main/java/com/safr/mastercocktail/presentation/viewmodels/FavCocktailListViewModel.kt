@@ -43,15 +43,11 @@ class FavCocktailListViewModel @Inject constructor(
                         view.isVisible = false
                         if (dataState.data.isEmpty()) {
                             textView.isVisible = true
+                            dataStateMut.postValue(emptyList())
                         }
                         else {
                             textView.isVisible = false
                             dataStateMut.postValue(dataState.data)
-                            Log.d(
-                                "lol",
-                                "FavCocktailListFragment subscribeObservers() else ${dataState.data.size} "
-                            )
-
                         }
                     }
                 }

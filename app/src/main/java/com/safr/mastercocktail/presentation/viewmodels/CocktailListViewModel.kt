@@ -10,8 +10,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.safr.mastercocktail.core.DataState
-import com.safr.mastercocktail.domain.model.api.DetailedDrinkNet
-import com.safr.mastercocktail.domain.model.api.DrinkListNet
 import com.safr.mastercocktail.domain.model.api.DrinkNet
 import com.safr.mastercocktail.domain.usecases.api.GetCocktailsApiUseCases
 import com.safr.mastercocktail.domain.usecases.api.SearchCocktailsApiUseCases
@@ -49,7 +47,7 @@ class CocktailListViewModel @Inject constructor(
                     is DataState.Error -> DataState.Error(object : Error() {})
                     DataState.Loading -> view.isVisible = true
                     is DataState.Success -> {
-                        dataStateMut.value = dataState.data.drinks
+                        dataStateMut.value = dataState.data?.drinks
                         view.isVisible = false
                     }
                 }
@@ -58,23 +56,37 @@ class CocktailListViewModel @Inject constructor(
     }
 
     fun search(
-        name: String, view:
-        RelativeLayout, textView: TextView
+        name: String, view: RelativeLayout, textView: TextView
     ) {
         viewModelScope.launch {
             searchCocktail.searchCocktails(name).onEach { dataState ->
                 when (dataState) {
+
                     is DataState.Error -> DataState.Error(object : Error() {})
-                    DataState.Loading -> view.isVisible = true
-                    is DataState.Success -> {
-                        view.isVisible = false
-                        textView.isVisible = false
-                        searchdataStateMut.value = dataState.data.drinks
-                        Log.d("lol", "CocktailListViewModel search ${dataState.data.drinks[0]}")
+                    DataState.Loading -> {
+                        view.isVisible = true
                     }
+
+                    is DataState.Success -> {
+                        Log.d("lol", "CocktailListViewModel search null ${dataState.data?.drinks}")
+                        view.isVisible = false
+
+                        if (dataState.data?.drinks != null) {
+                            textView.isVisible = false
+                            searchdataStateMut.value = dataState.data.drinks
+                            Log.d("lol", "CocktailListViewModel search ${dataState.data.drinks[0]}")
+                        }
+                        else {
+                            textView.isVisible = true
+                            Log.d("lol", "CocktailListViewModel search else")
+
+                            searchdataStateMut.value = emptyList()
+                        }
+
+                    }
+
                 }
-            }
-                .launchIn(viewModelScope)
+            }.launchIn(viewModelScope)
         }
     }
 }

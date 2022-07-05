@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.analytics.ktx.logEvent
 import com.google.firebase.ktx.Firebase
 import com.safr.mastercocktail.R
 import com.safr.mastercocktail.databinding.FragmentFavCocktailListBinding
@@ -27,7 +28,7 @@ import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class FavCocktailListFragment : Fragment(), FavDrinkRecyclerViewAdapter.DrinkListClickListener {
+class FavCocktailListFragment : Fragment(), FavDrinkRecyclerViewAdapter.FavDrinkListClickListener {
 
     private val viewModel: FavCocktailListViewModel by viewModels()
 
@@ -46,9 +47,9 @@ class FavCocktailListFragment : Fragment(), FavDrinkRecyclerViewAdapter.DrinkLis
         super.onCreate(savedInstanceState)
         analytics = Firebase.analytics
         Log.d("lol", "FavCocktailListFragment onCreate")
-        val bundle = Bundle()
-        bundle.putString("name", "cocktail_fav_list")
-        analytics.logEvent("fragment_open", bundle)
+        analytics.logEvent("fragment_open"){
+          param("name", "cocktail_fav_list")
+        }
     }
 
     override fun onCreateView(
@@ -59,11 +60,6 @@ class FavCocktailListFragment : Fragment(), FavDrinkRecyclerViewAdapter.DrinkLis
         return mBinding.root
     }
 
-    override fun onResume() {
-        super.onResume()
-        Log.d("lol", "FavCocktailListFragment onResume()")
-//        viewModel.run()
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) = mBinding.run {
         super.onViewCreated(view, savedInstanceState)
@@ -90,20 +86,11 @@ class FavCocktailListFragment : Fragment(), FavDrinkRecyclerViewAdapter.DrinkLis
     }
 
     private fun setupRecyclerView(drinkDataLocalMods: List<DrinkData>) = mBinding.run {
-        val diffCallback = object : DiffCallback<DrinkData>() {
-            override fun areItemsTheSame(oldItem: DrinkData, newItem: DrinkData): Boolean {
-                return oldItem.idDrink == newItem.idDrink
-            }
-
-            override fun areContentsTheSame(oldItem: DrinkData, newItem: DrinkData): Boolean {
-                return oldItem == newItem
-            }
-
-        }
-        mAdapter.setList(drinkDataLocalMods, this@FavCocktailListFragment, diffCallback)
+        Log.d("lol","${drinkDataLocalMods.size }")
+        mAdapter.setList(drinkDataLocalMods, this@FavCocktailListFragment)
     }
 
-    override fun onClickDrinkList(drinkId: Int) {
+    override fun onClickDrinkList(drinkId: Int?) {
         val bundle = bundleOf("drinkId" to drinkId)
         Navigation.findNavController(this.view!!)
             .navigate(R.id.action_tabFragment_to_cocktailDetailFragment, bundle)

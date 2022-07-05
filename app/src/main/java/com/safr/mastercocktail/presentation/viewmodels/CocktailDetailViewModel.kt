@@ -1,8 +1,9 @@
 package com.safr.mastercocktail.presentation.viewmodels
 
 import android.app.Application
-import android.util.Log
+import android.graphics.drawable.Drawable
 import android.view.View
+import android.widget.ImageView
 import android.widget.RelativeLayout
 import androidx.core.view.isVisible
 import androidx.lifecycle.AndroidViewModel
@@ -37,30 +38,49 @@ class CocktailDetailViewModel @Inject constructor(
     val detailListDrink: LiveData<DetailedDrinkNet>
         get() = mutListDrink
 
-    private val mutFavour: MutableLiveData<DataState<Boolean>> = MutableLiveData()
-    val favourites: LiveData<DataState<Boolean>>
+    private val mutFavour: MutableLiveData<
+            Boolean> = MutableLiveData()
+    val favourites: LiveData<Boolean>
         get() = mutFavour
 
 
-    fun start(id: Int, view: RelativeLayout) {
+    fun start(
+        id: Int,
+        view: RelativeLayout,
+    ) {
         idMut.value = id
         viewModelScope.launch {
             cocktailDetApi.getCocktailDetails(idMut.value ?: 15346)
                 .onEach { state ->
                     when (state) {
                         is DataState.Error -> object : Error() {}
-                        DataState.Loading -> view.visibility = View.VISIBLE
+                        DataState.Loading -> view.isVisible = true
                         is DataState.Success -> {
-                            Log.d("lol", "${state.data}")
-                            mutListDrink.value = state.data.drinks[0]
+                            mutListDrink.postValue(state.data?.drinks?.get(0))
                         }
                     }
                 }.launchIn(viewModelScope)
 
-            checkDB.checkIfFavourite(idMut.value ?: 15346)
-                .onEach { state -> mutFavour.value = state }.launchIn(viewModelScope)
+//            checkDB.checkIfFavourite(idMut.value ?: 15346)
+//                .onEach { state -> mutFavour.postValue(state) }.launchIn(viewModelScope)
+            checkStar()
+//            checkStar(viewImage, star, unStar)
         }
 
+    }
+
+    fun checkStar() {
+        viewModelScope.launch {
+            checkDB.checkIfFavourite(idMut.value ?: 15346)
+                .onEach { state ->
+                    when (state) {
+                        is DataState.Success ->{
+                            mutFavour.postValue(state.data)
+                        }
+                        else -> {}
+                    }
+                }.launchIn(viewModelScope)
+        }
     }
 
     fun addCocktailToFavourit(view: RelativeLayout) {
@@ -68,9 +88,11 @@ class CocktailDetailViewModel @Inject constructor(
             cocktailDetApi.getCocktailDetails(idMut.value ?: 15346)
                 .onEach { state ->
                     when (state) {
-                        is DataState.Error -> DataState.Error(object : Error() {})
-                        DataState.Loading -> view.isVisible = false
-                        is DataState.Success -> addDb.addToFavourites(DrinkData(state.data.drinks[0]))
+                        is DataState.Success -> {
+                            addDb.addToFavourites(DrinkData(state.data?.drinks!![0]))
+                            checkStar()
+                        }
+                        else -> {}
                     }
                 }.launchIn(viewModelScope)
         }
@@ -82,12 +104,11 @@ class CocktailDetailViewModel @Inject constructor(
             cocktailDetApi.getCocktailDetails(idMut.value ?: 15346)
                 .onEach { state ->
                     when (state) {
-                        is DataState.Error -> DataState.Error(object : Error() {})
-                        DataState.Loading -> view.isVisible = true
                         is DataState.Success -> {
-                            removeDb.removeFromFavourites(DrinkData(state.data.drinks[0]))
-                            view.isVisible = false
+                            removeDb.removeFromFavourites(DrinkData(state.data?.drinks!![0]))
+                            checkStar()
                         }
+                        else -> {}
                     }
                 }.launchIn(viewModelScope)
         }

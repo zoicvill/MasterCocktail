@@ -1,5 +1,6 @@
 package com.safr.mastercocktail.di
 
+import com.safr.mastercocktail.presentation.adapters.CategoryAdapter
 import com.safr.mastercocktail.presentation.adapters.DrinkRecyclerViewAdapter
 import com.safr.mastercocktail.presentation.adapters.FavDrinkRecyclerViewAdapter
 import dagger.Module
@@ -19,5 +20,10 @@ object AdapterModule {
     @Provides
     fun provideDrinkRecyclerViewAdapter(): DrinkRecyclerViewAdapter {
         return DrinkRecyclerViewAdapter()
+    }
+
+    @Provides
+    fun provideCategoryAdapter(): CategoryAdapter {
+        return CategoryAdapter()
     }
 }

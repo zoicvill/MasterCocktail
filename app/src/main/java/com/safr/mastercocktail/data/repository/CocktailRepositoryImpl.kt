@@ -4,10 +4,12 @@ import android.os.Bundle
 import android.util.Log
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.analytics.ktx.logEvent
 import com.google.firebase.ktx.Firebase
 import com.safr.mastercocktail.core.DataState
 import com.safr.mastercocktail.data.local.datasourse.LocalDataSource
 import com.safr.mastercocktail.data.network.datasourse.ApiDataSource
+import com.safr.mastercocktail.domain.model.api.CatModelListNet
 import com.safr.mastercocktail.domain.model.api.DetailListDrinkNet
 import com.safr.mastercocktail.domain.model.api.DrinkListNet
 import com.safr.mastercocktail.domain.model.data.DrinkData
@@ -28,7 +30,7 @@ class CocktailRepositoryImpl @Inject constructor(
 
     private var analytics: FirebaseAnalytics = Firebase.analytics
 
-    override suspend fun getCocktails(): Flow<DataState<DrinkListNet>> = flow {
+    override suspend fun getCocktails(): Flow<DataState<DrinkListNet?>> = flow {
         val bundle = Bundle()
         bundle.putString("function", "getCocktails")
         analytics.logEvent("repository_called", bundle)
@@ -38,28 +40,37 @@ class CocktailRepositoryImpl @Inject constructor(
     }.catch { emit(DataState.Error(it)) }
         .flowOn(Dispatchers.IO)
 
-    override suspend fun searchCocktails(name: String): Flow<DataState<DrinkListNet>> = flow {
+    override suspend fun searchCocktails(name: String): Flow<DataState<DrinkListNet?>> = flow {
         val bundle = Bundle()
         bundle.putString("function", "searchCocktails")
         analytics.logEvent("repository_called", bundle)
+
         emit(DataState.Loading)
         val search = api.searchCocktails(name)
         emit(DataState.Success(search))
-
+        Log.d("lol", "CocktailRepositoryImpl test ${api.searchCocktails("lol")}")
     }.catch { emit(DataState.Error(it)) }
         .flowOn(Dispatchers.IO)
 
-    override suspend fun getCocktailDetails(cocktailId: Int): Flow<DataState<DetailListDrinkNet>> =
+    override suspend fun getCocktailDetails(cocktailId: Int): Flow<DataState<DetailListDrinkNet?>> =
         flow {
-            val bundle = Bundle()
-            bundle.putString("function", "getCocktailDetails")
-            analytics.logEvent("repository_called", bundle)
+            analytics.logEvent("repository_called") {
+                param("function", "getCocktailDetails")
+            }
+
             emit(DataState.Loading)
             val cocktail = api.getCocktailDetails(cocktailId)
             emit(DataState.Success(cocktail))
 
         }.catch { emit(DataState.Error(it)) }
             .flowOn(Dispatchers.IO)
+
+    override suspend fun getCategory(): Flow<DataState<CatModelListNet?>> = flow {
+        emit(DataState.Loading)
+        emit(DataState.Success(api.getCategory()))
+    }.catch { emit(DataState.Error(it)) }
+        .flowOn(Dispatchers.IO)
+
 
     //dao
 

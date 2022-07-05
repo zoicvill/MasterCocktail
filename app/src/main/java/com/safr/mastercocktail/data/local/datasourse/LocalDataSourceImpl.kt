@@ -12,8 +12,8 @@ import javax.inject.Inject
 class LocalDataSourceImpl @Inject constructor(
     private val dao: CocktailDao) : LocalDataSource {
 
-    override suspend fun insert(cocktail: DrinkData): Long {
-        return dao.insert(cocktail.to())
+    override suspend fun insert(cocktail: DrinkData): Long? {
+        return cocktail.to()?.let { dao.insert(it) }
     }
 
     override fun getFavourites(): Flow<DataState<List<DrinkData>>> = flow {
@@ -28,7 +28,7 @@ class LocalDataSourceImpl @Inject constructor(
     }.flowOn(Dispatchers.IO)
 
     override suspend fun remove(cocktail: DrinkData) {
-        dao.remove(cocktail.to())
+        cocktail.to()?.let { dao.remove(it) }
     }
 
     override suspend fun isFavourite(id: Int): Flow<DataState<Boolean>> = flow {

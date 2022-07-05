@@ -1,8 +1,8 @@
 package com.safr.mastercocktail.data.network.api
 
+import com.safr.mastercocktail.data.network.model.CatModelListNetMod
 import com.safr.mastercocktail.data.network.model.DetailListDrinkNetMod
 import com.safr.mastercocktail.data.network.model.DrinkListNetMod
-import com.safr.mastercocktail.domain.model.api.DrinkListNet
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -21,4 +21,7 @@ interface CocktailApi {
     suspend fun getCocktailDetails(
         @Query("i") type: Int,
     ): DetailListDrinkNetMod
+
+    @GET("list.php?c=list")
+    suspend fun getCategories(): CatModelListNetMod
 }

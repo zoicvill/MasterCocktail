@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class SearchCocktailsApiUseCases @Inject constructor(private val rep: CocktailRepository) {
-    suspend fun searchCocktails(name: String): Flow<DataState<DrinkListNet>> {
+    suspend fun searchCocktails(name: String): Flow<DataState<DrinkListNet?>> {
         return rep.searchCocktails(name)
 
     }

@@ -1,10 +1,7 @@
 package com.safr.mastercocktail.di
 
-import com.safr.mastercocktail.data.local.dao.CocktailDao
 import com.safr.mastercocktail.data.local.datasourse.LocalDataSource
-import com.safr.mastercocktail.data.network.api.CocktailApi
 import com.safr.mastercocktail.data.network.datasourse.ApiDataSource
-import com.safr.mastercocktail.data.network.datasourse.ApiDataSourceImpl
 import com.safr.mastercocktail.data.repository.CocktailRepositoryImpl
 import com.safr.mastercocktail.domain.repository.CocktailRepository
 import dagger.Module

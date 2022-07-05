@@ -64,7 +64,7 @@ class CocktailListFragment : Fragment(), DrinkRecyclerViewAdapter.DrinkListClick
         searchView()
     }
 
-    private fun subscribeObservers() = mBinding.run {
+    private fun subscribeObservers(){
         viewModel.getCocktailState.observe(viewLifecycleOwner) { dataState ->
             setupRecyclerView(dataState)
         }
@@ -104,12 +104,10 @@ class CocktailListFragment : Fragment(), DrinkRecyclerViewAdapter.DrinkListClick
             setHasFixedSize(true)
             itemAnimator = DefaultItemAnimator()
             adapter = mAdapter
-//            layoutManager = GridLayoutManager(context, columnCount)
         }
     }
 
-    private fun setupRecyclerView(drinkDataLocalMods: List<DrinkNet>) = mBinding.run {
-        Log.d("lol setupRecyclerView CocktailListFragment", "${drinkDataLocalMods[0]}")
+    private fun setupRecyclerView(drinkDataLocalMods: List<DrinkNet>) {
         val diffCallback = object : DiffCallback<DrinkNet>() {
             override fun areItemsTheSame(oldItem: DrinkNet, newItem: DrinkNet): Boolean {
                 return oldItem.idDrink == newItem.idDrink
