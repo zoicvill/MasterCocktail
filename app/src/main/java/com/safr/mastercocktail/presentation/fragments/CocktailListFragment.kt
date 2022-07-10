@@ -63,7 +63,7 @@ class CocktailListFragment : Fragment(), Listener {
     }
 
     private fun subscribeObservers() {
-//        viewModel.searchdataState.observe(viewLifecycleOwner) { dataState ->
+//        viewModel.searchDataState.observe(viewLifecycleOwner) { dataState ->
 //            setupRecyclerView(dataState)
 //        }
         viewModel.catDrinkState.observe(viewLifecycleOwner) { dataState ->

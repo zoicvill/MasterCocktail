@@ -1,7 +1,6 @@
 package com.safr.mastercocktail.presentation.viewmodels
 
 import android.app.Application
-import android.util.Log
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.core.view.isVisible
@@ -10,7 +9,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.safr.mastercocktail.core.DataState
-import com.safr.mastercocktail.data.local.model.DrinkDataLocalMod
 import com.safr.mastercocktail.domain.model.data.DrinkData
 import com.safr.mastercocktail.domain.usecases.db.FavouritesDbUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel

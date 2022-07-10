@@ -16,7 +16,7 @@ data class DrinkData(
         idDrink = detailedDrink.idDrink,
     )
 
-    override fun to(): DrinkDataLocalMod? {
+    override fun to(): DrinkDataLocalMod {
         return DrinkDataLocalMod(strDrink,strDrinkThumb ,idDrink)
     }
 }

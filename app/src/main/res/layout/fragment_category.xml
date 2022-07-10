@@ -58,7 +58,7 @@
         android:layout_below="@id/searchCard"
         android:fontFamily="sans-serif-condensed-medium"
         android:gravity="center"
-        android:text="No results! :("
+        android:text="@string/no_results"
         android:textSize="30sp"
         android:textStyle="bold"
         android:visibility="gone"
@@ -75,7 +75,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/buttonRandom"
-        tools:listitem="@layout/container_item_category" />
+        tools:listitem="@layout/item_view_category" />
 
     <RelativeLayout
         android:id="@+id/progressBarHolder"

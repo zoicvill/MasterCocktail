@@ -5,7 +5,6 @@ import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.safr.mastercocktail.presentation.fragments.CategoryFragment
-import com.safr.mastercocktail.presentation.fragments.CocktailDetailFragment
 import com.safr.mastercocktail.presentation.fragments.CocktailListFragment
 import com.safr.mastercocktail.presentation.fragments.FavCocktailListFragment
 

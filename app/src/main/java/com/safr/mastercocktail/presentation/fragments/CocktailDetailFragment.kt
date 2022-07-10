@@ -1,6 +1,5 @@
 package com.safr.mastercocktail.presentation.fragments
 
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -18,12 +17,9 @@ import com.google.firebase.ktx.Firebase
 import com.safr.mastercocktail.R
 import com.safr.mastercocktail.databinding.FragmentCocktailDetailBinding
 import com.safr.mastercocktail.domain.model.api.DetailedDrinkNet
-import com.safr.mastercocktail.domain.model.data.DrinkData
 import com.safr.mastercocktail.presentation.adapters.CocktailDetailAdapter
-import com.safr.mastercocktail.presentation.adapters.FavDrinkRecyclerViewAdapter
 import com.safr.mastercocktail.presentation.viewmodels.CocktailDetailViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.fragment_cocktail_detail.*
 import javax.inject.Inject
 
 
@@ -62,7 +58,7 @@ class CocktailDetailFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentCocktailDetailBinding.inflate(layoutInflater)
         return mBinding.root
     }
@@ -80,13 +76,13 @@ class CocktailDetailFragment : Fragment() {
 
     private fun like() = mBinding.run {
         likeStar.setOnClickListener {
-            Log.d("lol", "viewmodel like()  ${isFavourite}")
+            Log.d("lol", "viewmodel like()  $isFavourite")
             if (isFavourite) {
-                viewModel.removeCocktailFromFavourit(progressBarHolder)
+                viewModel.removeCocktailFromFavourit()
                 Toast.makeText(context, "Removed from Favourites!", Toast.LENGTH_SHORT).show()
             }
             else {
-                viewModel.addCocktailToFavourit(progressBarHolder)
+                viewModel.addCocktailToFavourit()
                 Toast.makeText(context, "Added to Favourites!", Toast.LENGTH_SHORT).show()
             }
         }

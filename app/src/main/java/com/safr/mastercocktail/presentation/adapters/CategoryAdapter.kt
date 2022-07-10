@@ -26,7 +26,7 @@ class CategoryAdapter @Inject constructor() : RecyclerView.Adapter<CategoryAdapt
     }
 
     override fun onBindViewHolder(holder: VH, position: Int) {
-        Log.d("lol", "holder.bin  ${position}")
+        Log.d("lol", "holder.bin  $position")
         holder.bind(position)
     }
 

@@ -1,9 +1,6 @@
 package com.safr.mastercocktail.presentation.viewmodels
 
 import android.app.Application
-import android.graphics.drawable.Drawable
-import android.view.View
-import android.widget.ImageView
 import android.widget.RelativeLayout
 import androidx.core.view.isVisible
 import androidx.lifecycle.AndroidViewModel
@@ -83,7 +80,7 @@ class CocktailDetailViewModel @Inject constructor(
         }
     }
 
-    fun addCocktailToFavourit(view: RelativeLayout) {
+    fun addCocktailToFavourit() {
         viewModelScope.launch {
             cocktailDetApi.getCocktailDetails(idMut.value ?: 15346)
                 .onEach { state ->
@@ -99,7 +96,7 @@ class CocktailDetailViewModel @Inject constructor(
     }
 
 
-    fun removeCocktailFromFavourit(view: RelativeLayout) {
+    fun removeCocktailFromFavourit() {
         viewModelScope.launch {
             cocktailDetApi.getCocktailDetails(idMut.value ?: 15346)
                 .onEach { state ->

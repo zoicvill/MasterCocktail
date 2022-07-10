@@ -34,9 +34,9 @@ class CategoryViewModel @Inject constructor(
     val categoryLive: LiveData<List<CategoryNet>>
         get() = mutCategory
 
-    private val searchdataStateMut: MutableLiveData<List<DrinkNet>> = MutableLiveData()
-    val searchdataState: LiveData<List<DrinkNet>>
-        get() = searchdataStateMut
+    private val searchDataStateMut: MutableLiveData<List<DrinkNet>> = MutableLiveData()
+    val searchDataState: LiveData<List<DrinkNet>>
+        get() = searchDataStateMut
 
     private val dataStateMutRandom: MutableLiveData<List<DrinkNet>> = MutableLiveData()
     val getRandomState: LiveData<List<DrinkNet>>
@@ -97,7 +97,7 @@ class CategoryViewModel @Inject constructor(
 
                         if (dataState.data?.drinks != null) {
                             textView.isVisible = false
-                            searchdataStateMut.value = dataState.data.drinks
+                            searchDataStateMut.value = dataState.data.drinks
                             Log.d(
                                 "lol",
                                 "CocktailListViewModel search ${dataState.data.drinks[0]}"
@@ -107,7 +107,7 @@ class CategoryViewModel @Inject constructor(
                             textView.isVisible = true
                             Log.d("lol", "CocktailListViewModel search else")
 
-                            searchdataStateMut.value = emptyList()
+                            searchDataStateMut.value = emptyList()
                         }
 
                     }

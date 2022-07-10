@@ -40,7 +40,7 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryClickListener, List
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentCategoryBinding.inflate(layoutInflater)
         return mBinding.root
     }
@@ -52,7 +52,7 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryClickListener, List
         searchView()
         mBinding.buttonRandom.setOnClickListener {
             viewModel.getRandomState.observe(viewLifecycleOwner){
-                onClickDrinkList(it[0].idDrink?: 15346)
+                onClickDrinkList(it[0].idDrink)
             }
         }
     }
@@ -62,7 +62,7 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryClickListener, List
         viewModel.categoryLive.observe(viewLifecycleOwner) {
             createAdapter(it)
         }
-        viewModel.searchdataState.observe(viewLifecycleOwner) { dataState ->
+        viewModel.searchDataState.observe(viewLifecycleOwner) { dataState ->
             setupRecyclerView(dataState)
         }
     }
@@ -123,7 +123,7 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryClickListener, List
         val bundle = bundleOf("nameCat" to nameCat)
         Navigation.findNavController(this.requireView())
             .navigate(R.id.action_tabFragment_to_cocktailListFragment, bundle)
-        Log.d("lol", " onClick ${nameCat}")
+        Log.d("lol", " onClick $nameCat")
     }
 
     override fun onClickDrinkList(drinkId: Int) {

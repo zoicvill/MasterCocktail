@@ -1,13 +1,11 @@
 package com.safr.mastercocktail.domain.repository
 
 import com.safr.mastercocktail.core.DataState
-import com.safr.mastercocktail.data.network.model.DrinkListNetMod
 import com.safr.mastercocktail.domain.model.api.CatModelListNet
 import com.safr.mastercocktail.domain.model.api.DetailListDrinkNet
 import com.safr.mastercocktail.domain.model.api.DrinkListNet
 import com.safr.mastercocktail.domain.model.data.DrinkData
 import kotlinx.coroutines.flow.Flow
-import retrofit2.http.Query
 
 interface CocktailRepository {
 
