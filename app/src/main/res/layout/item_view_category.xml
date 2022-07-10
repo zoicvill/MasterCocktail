@@ -9,11 +9,11 @@
     android:layout_marginTop="8dp"
     android:layout_marginEnd="16dp"
     android:layout_marginBottom="8dp"
+    app:cardBackgroundColor="#00FFFFFF"
+    app:cardCornerRadius="15dp"
     app:cardElevation="0dp"
     app:strokeColor="@color/custom_view"
-    app:strokeWidth="0.5dp"
-    app:cardBackgroundColor="#00FFFFFF"
-    app:cardCornerRadius="15dp">
+    app:strokeWidth="1.5dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -25,7 +25,7 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="@string/margarita"
-            android:textSize="24sp"
+            android:textSize="34sp"
             tools:fontFamily="sans-serif-smallcaps" />
 
     </LinearLayout>

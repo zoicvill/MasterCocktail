@@ -10,7 +10,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.safr.mastercocktail.core.DataState
+import com.safr.mastercocktail.data.network.model.DrinkNetMod
 import com.safr.mastercocktail.domain.model.api.DrinkNet
+import com.safr.mastercocktail.domain.usecases.api.CocktailCategoryUseCases
 import com.safr.mastercocktail.domain.usecases.api.GetCocktailsApiUseCases
 import com.safr.mastercocktail.domain.usecases.api.SearchCocktailsApiUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,6 +26,7 @@ import javax.inject.Inject
 class CocktailListViewModel @Inject constructor(
     private val getCocktail: GetCocktailsApiUseCases,
     private val searchCocktail: SearchCocktailsApiUseCases,
+    private val catDrink: CocktailCategoryUseCases,
     application: Application
 ) : AndroidViewModel(application) {
 
@@ -38,9 +41,30 @@ class CocktailListViewModel @Inject constructor(
     val searchdataState: LiveData<List<DrinkNet>>
         get() = searchdataStateMut
 
-    fun start(
-        view: RelativeLayout
-    ) {
+
+    private val catDrinkMut: MutableLiveData<
+            List<DrinkNet>> = MutableLiveData()
+
+    val catDrinkState: LiveData<List<DrinkNet>>
+        get() = catDrinkMut
+
+    fun catDrinkFun(str: String?, view: RelativeLayout) {
+        viewModelScope.launch {
+            catDrink.getCocktailsCategories(str?: "Cocktail").collect() { dataState ->
+                when (dataState) {
+                    is DataState.Error -> DataState.Error(object : Error() {})
+                    DataState.Loading -> view.isVisible = true
+                    is DataState.Success -> {
+                        catDrinkMut.value = dataState.data?.drinks
+                        view.isVisible = false
+                    }
+
+                }
+            }
+        }
+    }
+
+    fun start(view: RelativeLayout) {
         viewModelScope.launch {
             getCocktail.getCocktails().collect { dataState ->
                 when (dataState) {
@@ -55,6 +79,7 @@ class CocktailListViewModel @Inject constructor(
         }
     }
 
+
     fun search(
         name: String, view: RelativeLayout, textView: TextView
     ) {
@@ -68,13 +93,19 @@ class CocktailListViewModel @Inject constructor(
                     }
 
                     is DataState.Success -> {
-                        Log.d("lol", "CocktailListViewModel search null ${dataState.data?.drinks}")
+                        Log.d(
+                            "lol",
+                            "CocktailListViewModel search null ${dataState.data?.drinks}"
+                        )
                         view.isVisible = false
 
                         if (dataState.data?.drinks != null) {
                             textView.isVisible = false
                             searchdataStateMut.value = dataState.data.drinks
-                            Log.d("lol", "CocktailListViewModel search ${dataState.data.drinks[0]}")
+                            Log.d(
+                                "lol",
+                                "CocktailListViewModel search ${dataState.data.drinks[0]}"
+                            )
                         }
                         else {
                             textView.isVisible = true

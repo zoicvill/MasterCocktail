@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.DefaultItemAnimator
 import com.bumptech.glide.Glide
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
@@ -17,9 +18,13 @@ import com.google.firebase.ktx.Firebase
 import com.safr.mastercocktail.R
 import com.safr.mastercocktail.databinding.FragmentCocktailDetailBinding
 import com.safr.mastercocktail.domain.model.api.DetailedDrinkNet
+import com.safr.mastercocktail.domain.model.data.DrinkData
+import com.safr.mastercocktail.presentation.adapters.CocktailDetailAdapter
+import com.safr.mastercocktail.presentation.adapters.FavDrinkRecyclerViewAdapter
 import com.safr.mastercocktail.presentation.viewmodels.CocktailDetailViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_cocktail_detail.*
+import javax.inject.Inject
 
 
 private const val ARG_PARAM1 = "drinkId"
@@ -37,9 +42,8 @@ class CocktailDetailFragment : Fragment() {
 
     private val viewModel: CocktailDetailViewModel by viewModels()
 
-    private var star: Drawable? = null
-
-    private var unStar: Drawable? = null
+    @Inject
+    lateinit var mAdapter: CocktailDetailAdapter
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,15 +69,6 @@ class CocktailDetailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        star = AppCompatResources.getDrawable(
-            context!!,
-            R.drawable.ic_star_24
-        )
-
-        unStar = AppCompatResources.getDrawable(
-            context!!,
-            R.drawable.ic_star_outline_24
-        )
         viewModel.start(
             drinkId ?: 15346,
             mBinding.progressBarHolder,
@@ -94,31 +89,6 @@ class CocktailDetailFragment : Fragment() {
                 viewModel.addCocktailToFavourit(progressBarHolder)
                 Toast.makeText(context, "Added to Favourites!", Toast.LENGTH_SHORT).show()
             }
-
-
-//            if (!isFavourite) {
-//                like_star.setImageDrawable(
-//                    AppCompatResources.getDrawable(
-//                        context!!,
-//                        R.drawable.ic_star_24
-//                    )
-//                )
-//                isFavourite = true
-//                viewModel.addCocktailToFavourit(progressBarHolder)
-//                Toast.makeText(context, "Added to Favourites!", Toast.LENGTH_SHORT).show()
-//
-//            }
-//            else {
-//                like_star.setImageDrawable(
-//                    AppCompatResources.getDrawable(
-//                        context!!,
-//                        R.drawable.ic_star_outline_24
-//                    )
-//                )
-//                isFavourite = false
-//                viewModel.removeCocktailFromFavourit(progressBarHolder)
-//                Toast.makeText(context, "Removed from Favourites!", Toast.LENGTH_SHORT).show()
-//            }
         }
     }
 
@@ -126,7 +96,7 @@ class CocktailDetailFragment : Fragment() {
         if (star) {
             setImageDrawable(
                 AppCompatResources.getDrawable(
-                    context!!,
+                    requireContext(),
                     R.drawable.ic_star_24
                 )
             )
@@ -134,69 +104,42 @@ class CocktailDetailFragment : Fragment() {
         else {
             setImageDrawable(
                 AppCompatResources.getDrawable(
-                    context!!,
+                    requireContext(),
                     R.drawable.ic_star_outline_24
                 )
             )
         }
     }
 
-//    private fun cheker() {
-//        viewModel.checkStar(
-//            mBinding.likeStar,
-//            star,
-//            unStar
-//        )
-//    }
-
     private fun subscribeObservers() = mBinding.run {
         viewModel.detailListDrink.observe(viewLifecycleOwner) { dataState ->
             displayData(dataState)
         }
         viewModel.favourites.observe(viewLifecycleOwner) {
-            liker(it)
-            isFavourite = it
+            liker(it ?: false)
+            isFavourite = it ?: false
             Log.d("lol", "favourites.observe  $isFavourite")
         }
-
-//            Log.d("lol", "viewModel.favourites.observe ${isFavourite}")
     }
 
-//        viewModel.favourites.observe(viewLifecycleOwner)
-//        { dataState ->
-//            when (dataState) {
-//                is DataState.Success<Boolean> -> {
-//                    isFavourite = dataState.data
-//                    if (isFavourite) {
-//                        like_star.setImageDrawable(
-//                            AppCompatResources.getDrawable(
-//                                context!!,
-//                                R.drawable.ic_star_24
-//                            )
-//                        )
-//                    }
-//                    else {
-//                        like_star.setImageDrawable(
-//                            AppCompatResources.getDrawable(
-//                                context!!,
-//                                R.drawable.ic_star_outline_24
-//                            )
-//                        )
-//                    }
-//                }
-//                else -> {
-//                    DataState.Error(object : Error() {})
-//                }
-//            }
-//        }
 
-    private fun displayData(cocktail: DetailedDrinkNet) {
-        cocktail_name.text = cocktail.strDrink
-        Glide.with(this)
+
+    private fun createAdapter(drinkDataLocalMods: List<String?>) = mBinding.run {
+        mBinding.list.apply {
+            setHasFixedSize(true)
+            itemAnimator = DefaultItemAnimator()
+            adapter = mAdapter
+        }
+        mAdapter.setList(drinkDataLocalMods)
+    }
+
+    private fun displayData(cocktail: DetailedDrinkNet) = mBinding.run {
+        cocktailName.text = cocktail.strDrink
+        Glide.with(this@CocktailDetailFragment)
             .load(cocktail.strDrinkThumb)
             .into(cocktailImage)
-        cocktail_instructions.text = cocktail.strInstructions
-//        cocktail_ingridients.text = getIngridientsAndMeasures(cocktail)
+        cocktailInstructions.text = cocktail.strInstructions
+        createAdapter(cocktail.listIngredients)
         progressBarHolder.visibility = View.GONE
     }
 

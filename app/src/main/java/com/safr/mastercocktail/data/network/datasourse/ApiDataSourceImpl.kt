@@ -1,7 +1,7 @@
 package com.safr.mastercocktail.data.network.datasourse
 
-import android.util.Log
 import com.safr.mastercocktail.data.network.api.CocktailApi
+import com.safr.mastercocktail.data.network.model.DrinkListNetMod
 import com.safr.mastercocktail.domain.model.api.CatModelListNet
 import com.safr.mastercocktail.domain.model.api.DetailListDrinkNet
 import com.safr.mastercocktail.domain.model.api.DrinkListNet
@@ -10,7 +10,8 @@ import javax.inject.Singleton
 
 @Singleton
 class ApiDataSourceImpl @Inject constructor(
-    private val api: CocktailApi) : ApiDataSource {
+    private val api: CocktailApi
+) : ApiDataSource {
 
     override suspend fun getCocktails(type: String): DrinkListNet? {
         return api.getCocktails(type).to()
@@ -26,6 +27,10 @@ class ApiDataSourceImpl @Inject constructor(
 
     override suspend fun getCategory(): CatModelListNet? {
         return api.getCategories().to()
+    }
+
+    override suspend fun getCocktailsCategories(type: String): DrinkListNet? {
+        return api.getCocktailsCategories(type).to()
     }
 
 }

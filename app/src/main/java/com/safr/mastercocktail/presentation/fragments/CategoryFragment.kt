@@ -5,9 +5,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.DefaultItemAnimator
+import com.safr.mastercocktail.R
 import com.safr.mastercocktail.databinding.FragmentCategoryBinding
 import com.safr.mastercocktail.domain.model.api.CategoryNet
 import com.safr.mastercocktail.presentation.adapters.CategoryAdapter
@@ -45,7 +48,7 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryClickListener {
     private fun subscribeObservers() {
         viewModel.categoryLive.observe(viewLifecycleOwner) {
 //            setList(it)
-createAdapter(it)
+            createAdapter(it)
         }
     }
 
@@ -58,12 +61,10 @@ createAdapter(it)
         mAdapter.setList(setL, this@CategoryFragment)
     }
 
-    private fun setList(setL: List<CategoryNet>) {
-        Log.d("lol", "setList(setL: List<CategoryNet>)  ${setL.size}")
-        mAdapter.setList(setL, this@CategoryFragment)
-    }
-
     override fun onClick(nameCat: String?) {
+        val bundle = bundleOf("nameCat" to nameCat)
+        Navigation.findNavController(this.requireView())
+            .navigate(R.id.action_tabFragment_to_cocktailListFragment, bundle)
         Log.d("lol", " onClick ${nameCat}")
     }
 }

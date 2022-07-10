@@ -3,13 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/categoryFragment">
+    app:startDestination="@id/tabFragment">
 
     <fragment
         android:id="@+id/tabFragment"
         tools:layout="@layout/fragment_tab"
         android:name="com.safr.mastercocktail.presentation.fragments.TabFragment"
         android:label="TabFragment" >
+        <action
+            android:id="@+id/action_tabFragment_to_cocktailListFragment"
+            app:destination="@id/cocktailListFragment" />
         <action
             android:id="@+id/action_tabFragment_to_cocktailDetailFragment"
             app:destination="@id/cocktailDetailFragment" />
@@ -20,12 +23,19 @@
         android:name="com.safr.mastercocktail.presentation.fragments.CocktailDetailFragment"
         android:label="CocktailDetailFragment" >
         <action
-            android:id="@+id/action_cocktailDetailFragment_to_tabFragment"
-            app:destination="@id/tabFragment" />
+            android:id="@+id/action_cocktailDetailFragment_to_cocktailListFragment"
+            app:destination="@id/cocktailListFragment" />
     </fragment>
     <fragment
-        android:id="@+id/categoryFragment"
-        tools:layout="@layout/fragment_category"
-        android:name="com.safr.mastercocktail.presentation.fragments.CategoryFragment"
-        android:label="CategoryFragment" />
+        android:id="@+id/cocktailListFragment"
+        tools:layout="@layout/fragment_cocktail_list"
+        android:name="com.safr.mastercocktail.presentation.fragments.CocktailListFragment"
+        android:label="CocktailListFragment" >
+        <action
+            android:id="@+id/action_cocktailListFragment_to_cocktailDetailFragment"
+            app:destination="@id/cocktailDetailFragment" />
+        <action
+            android:id="@+id/action_cocktailListFragment_to_tabFragment"
+            app:destination="@id/tabFragment" />
+    </fragment>
 </navigation>

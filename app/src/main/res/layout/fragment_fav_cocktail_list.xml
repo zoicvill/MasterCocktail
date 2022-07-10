@@ -17,15 +17,19 @@
         android:visibility="gone"
         android:textSize="30sp"
         android:textStyle="bold" />
+
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/list"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="20dp"
+        android:requiresFadingEdge="vertical"
         app:layoutManager="LinearLayoutManager"
         tools:context=".ui.list.favourites.FavCocktailListFragment"
-        tools:listitem="@layout/cocktail_list_item"
-        android:requiresFadingEdge="vertical"
-        android:layout_margin="20dp"/>
+        tools:listitem="@layout/item_list_cocktail" />
     <RelativeLayout
         android:id="@+id/progressBarHolder"
         android:layout_width="match_parent"

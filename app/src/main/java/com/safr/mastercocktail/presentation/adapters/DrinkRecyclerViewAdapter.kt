@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.safr.mastercocktail.databinding.ItemCocktailBinding
 import com.safr.mastercocktail.databinding.ItemListCocktailBinding
 import com.safr.mastercocktail.domain.model.api.DrinkNet
 
@@ -16,7 +17,7 @@ class DrinkRecyclerViewAdapter : RecyclerView.Adapter<DrinkRecyclerViewAdapter.V
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
-            ItemListCocktailBinding.inflate(
+            ItemCocktailBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false
@@ -84,7 +85,7 @@ class DrinkRecyclerViewAdapter : RecyclerView.Adapter<DrinkRecyclerViewAdapter.V
 
     override fun getItemCount(): Int = mValues.size
 
-    inner class ViewHolder(private val view: ItemListCocktailBinding) :
+    inner class ViewHolder(private val view: ItemCocktailBinding) :
         RecyclerView.ViewHolder(view.root) {
 
         fun bind(item: Int) = view.apply {

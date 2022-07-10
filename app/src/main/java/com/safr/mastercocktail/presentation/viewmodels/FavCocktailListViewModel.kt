@@ -28,9 +28,9 @@ class FavCocktailListViewModel @Inject constructor(
 ) :
     AndroidViewModel(application) {
 
-    private val dataStateMut: MutableLiveData<List<DrinkData>> = MutableLiveData()
+    private val dataStateMut: MutableLiveData<List<DrinkData>?> = MutableLiveData()
 
-    val favourites: LiveData<List<DrinkData>>
+    val favourites: LiveData<List<DrinkData>?>
         get() = dataStateMut
 
     fun run(view: RelativeLayout, textView: TextView) {

@@ -34,9 +34,6 @@ class FavCocktailListFragment : Fragment(), FavDrinkRecyclerViewAdapter.FavDrink
 
     private lateinit var analytics: FirebaseAnalytics
 
-    private var columnCount = 2
-
-
     @Inject
     lateinit var mAdapter: FavDrinkRecyclerViewAdapter
 
@@ -63,36 +60,31 @@ class FavCocktailListFragment : Fragment(), FavDrinkRecyclerViewAdapter.FavDrink
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) = mBinding.run {
         super.onViewCreated(view, savedInstanceState)
-        createAdapter()
-        viewModel.run(progressBarHolder, no_fav_cocktail_title)
+
+        viewModel.run(progressBarHolder, noFavCocktailTitle)
         subscribeObservers()
     }
 
     private fun subscribeObservers() {
         viewLifecycleOwner.lifecycleScope.launchWhenResumed {
             viewModel.favourites.observe(viewLifecycleOwner) { dataState ->
-                setupRecyclerView(dataState)
+                createAdapter(dataState)
             }
         }
     }
 
-    private fun createAdapter() {
+    private fun createAdapter(drinkDataLocalMods: List<DrinkData>?) = mBinding.run {
         mBinding.list.apply {
             setHasFixedSize(true)
             itemAnimator = DefaultItemAnimator()
             adapter = mAdapter
-            layoutManager = GridLayoutManager(context, columnCount)
         }
-    }
-
-    private fun setupRecyclerView(drinkDataLocalMods: List<DrinkData>) = mBinding.run {
-        Log.d("lol","${drinkDataLocalMods.size }")
         mAdapter.setList(drinkDataLocalMods, this@FavCocktailListFragment)
     }
 
     override fun onClickDrinkList(drinkId: Int?) {
         val bundle = bundleOf("drinkId" to drinkId)
-        Navigation.findNavController(this.view!!)
+        Navigation.findNavController(this.requireView())
             .navigate(R.id.action_tabFragment_to_cocktailDetailFragment, bundle)
     }
 }

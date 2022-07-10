@@ -9,6 +9,7 @@ import com.google.firebase.ktx.Firebase
 import com.safr.mastercocktail.core.DataState
 import com.safr.mastercocktail.data.local.datasourse.LocalDataSource
 import com.safr.mastercocktail.data.network.datasourse.ApiDataSource
+import com.safr.mastercocktail.data.network.model.DrinkListNetMod
 import com.safr.mastercocktail.domain.model.api.CatModelListNet
 import com.safr.mastercocktail.domain.model.api.DetailListDrinkNet
 import com.safr.mastercocktail.domain.model.api.DrinkListNet
@@ -70,6 +71,13 @@ class CocktailRepositoryImpl @Inject constructor(
         emit(DataState.Success(api.getCategory()))
     }.catch { emit(DataState.Error(it)) }
         .flowOn(Dispatchers.IO)
+
+    override suspend fun getCocktailsCategories(type: String): Flow<DataState<DrinkListNet?>> =
+        flow {
+            emit(DataState.Loading)
+            emit(DataState.Success(api.getCocktailsCategories(type)))
+        }.catch { emit(DataState.Error(it)) }
+            .flowOn(Dispatchers.IO)
 
 
     //dao

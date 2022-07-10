@@ -22,12 +22,3 @@ data class DrinkDataLocalMod (
         idDrink = idDrink,)
     }
 }
-
-//{
-//    constructor(detailedDrink: DetailedDrinkNetMod) : this(
-//        strDrink = detailedDrink.strDrink,
-//        strDrinkThumb = detailedDrink.strDrinkThumb,
-//        idDrink = detailedDrink.idDrink,
-//    )
-//
-//}

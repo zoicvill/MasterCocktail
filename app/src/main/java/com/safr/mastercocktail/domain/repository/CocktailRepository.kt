@@ -1,11 +1,13 @@
 package com.safr.mastercocktail.domain.repository
 
 import com.safr.mastercocktail.core.DataState
+import com.safr.mastercocktail.data.network.model.DrinkListNetMod
 import com.safr.mastercocktail.domain.model.api.CatModelListNet
 import com.safr.mastercocktail.domain.model.api.DetailListDrinkNet
 import com.safr.mastercocktail.domain.model.api.DrinkListNet
 import com.safr.mastercocktail.domain.model.data.DrinkData
 import kotlinx.coroutines.flow.Flow
+import retrofit2.http.Query
 
 interface CocktailRepository {
 
@@ -16,6 +18,8 @@ interface CocktailRepository {
     suspend fun getCocktailDetails(cocktailId: Int): Flow<DataState<DetailListDrinkNet?>>
 
     suspend fun getCategory(): Flow<DataState<CatModelListNet?>>
+
+    suspend fun getCocktailsCategories(type: String): Flow<DataState<DrinkListNet?>>
 
 
 

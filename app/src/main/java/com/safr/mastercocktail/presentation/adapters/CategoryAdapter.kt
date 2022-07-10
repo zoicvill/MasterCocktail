@@ -15,11 +15,6 @@ class CategoryAdapter @Inject constructor() : RecyclerView.Adapter<CategoryAdapt
     private var mList = ArrayList<CategoryNet>()
     private lateinit var onClick: CategoryClickListener
 
-    init {
-        Log.d("lol", "init")
-
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
         return VH(
             ItemViewCategoryBinding.inflate(

@@ -39,8 +39,8 @@ class CocktailDetailViewModel @Inject constructor(
         get() = mutListDrink
 
     private val mutFavour: MutableLiveData<
-            Boolean> = MutableLiveData()
-    val favourites: LiveData<Boolean>
+            Boolean?> = MutableLiveData()
+    val favourites: LiveData<Boolean?>
         get() = mutFavour
 
 
@@ -56,7 +56,7 @@ class CocktailDetailViewModel @Inject constructor(
                         is DataState.Error -> object : Error() {}
                         DataState.Loading -> view.isVisible = true
                         is DataState.Success -> {
-                            mutListDrink.postValue(state.data?.drinks?.get(0))
+                            mutListDrink.postValue(state.data?.drinks?.last())
                         }
                     }
                 }.launchIn(viewModelScope)
@@ -69,7 +69,7 @@ class CocktailDetailViewModel @Inject constructor(
 
     }
 
-    fun checkStar() {
+    private fun checkStar() {
         viewModelScope.launch {
             checkDB.checkIfFavourite(idMut.value ?: 15346)
                 .onEach { state ->

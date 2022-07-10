@@ -4,6 +4,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.safr.mastercocktail.presentation.fragments.CategoryFragment
 import com.safr.mastercocktail.presentation.fragments.CocktailDetailFragment
 import com.safr.mastercocktail.presentation.fragments.CocktailListFragment
 import com.safr.mastercocktail.presentation.fragments.FavCocktailListFragment
@@ -17,7 +18,8 @@ class ViewPagerAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle) :
 
     override fun createFragment(position: Int): Fragment {
         when (position) {
-            0 -> return CocktailListFragment()
+//            0 -> return CocktailListFragment()
+            0 -> return CategoryFragment()
             1 -> return FavCocktailListFragment()
         }
         return CocktailListFragment()

@@ -24,4 +24,9 @@ interface CocktailApi {
 
     @GET("list.php?c=list")
     suspend fun getCategories(): CatModelListNetMod
+
+    @GET("filter.php")
+    suspend fun getCocktailsCategories(
+        @Query("c") type: String = "",
+    ): DrinkListNetMod
 }

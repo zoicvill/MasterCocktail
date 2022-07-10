@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -61,8 +62,8 @@
                 android:id="@+id/cocktail_ingridients_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/title_holder"
-                android:layout_marginTop="20dp"
+                android:layout_below="@+id/cocktail_instructions"
+                android:layout_marginTop="8dp"
                 android:fontFamily="sans-serif-condensed-medium"
                 android:gravity="start"
                 android:text="Ingridients"
@@ -70,28 +71,25 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/cocktail_ingridients"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/cocktail_ingridients_title"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="20dp"
-                android:fontFamily="sans-serif-condensed-medium"
-                android:gravity="start"
-                android:text="Cocktail Ingridients"
-                android:textSize="20sp" />
-
-            <TextView
                 android:id="@+id/cocktail_instructions_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/cocktail_ingridients"
-                android:layout_marginTop="20dp"
+                android:layout_below="@+id/title_holder"
+                android:layout_marginTop="8dp"
                 android:fontFamily="sans-serif-condensed-medium"
                 android:text="Cocktail Instructions"
                 android:textAlignment="textStart"
                 android:textSize="25sp"
                 android:textStyle="bold" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/cocktail_ingridients_title"
+                android:layout_marginTop="8dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/item_ingredients" />
 
             <TextView
                 android:id="@+id/cocktail_instructions"
@@ -99,7 +97,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/cocktail_instructions_title"
                 android:layout_marginStart="5dp"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginBottom="20dp"
                 android:fontFamily="sans-serif-condensed-medium"
                 android:text="Instructions"
