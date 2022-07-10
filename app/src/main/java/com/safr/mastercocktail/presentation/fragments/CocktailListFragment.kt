@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.SearchView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -18,19 +17,18 @@ import com.safr.mastercocktail.databinding.FragmentCocktailListBinding
 import com.safr.mastercocktail.domain.model.api.DrinkNet
 import com.safr.mastercocktail.presentation.adapters.DiffCallback
 import com.safr.mastercocktail.presentation.adapters.DrinkRecyclerViewAdapter
+import com.safr.mastercocktail.presentation.adapters.Listener
 import com.safr.mastercocktail.presentation.viewmodels.CocktailListViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.fragment_cocktail_list.*
 import javax.inject.Inject
 
 private const val ARG_PARAM1 = "nameCat"
 
 @AndroidEntryPoint
-class CocktailListFragment : Fragment(), DrinkRecyclerViewAdapter.DrinkListClickListener {
+class CocktailListFragment : Fragment(), Listener {
 
     private var binding: FragmentCocktailListBinding? = null
 
-    //    private var binding: FrCocktailListBinding? = null
     private val mBinding get() = binding!!
 
     private var nameCat: String? = null
@@ -55,7 +53,6 @@ class CocktailListFragment : Fragment(), DrinkRecyclerViewAdapter.DrinkListClick
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentCocktailListBinding.inflate(layoutInflater)
-//        binding = FrCocktailListBinding.inflate(layoutInflater)
         return mBinding.root
     }
 
@@ -63,42 +60,19 @@ class CocktailListFragment : Fragment(), DrinkRecyclerViewAdapter.DrinkListClick
         super.onViewCreated(view, savedInstanceState)
         viewModel.catDrinkFun(nameCat, mBinding.progressBarHolder)
         subscribeObservers()
-        searchView()
     }
 
     private fun subscribeObservers() {
-        viewModel.searchdataState.observe(viewLifecycleOwner) { dataState ->
-            setupRecyclerView(dataState)
-
-        }
+//        viewModel.searchdataState.observe(viewLifecycleOwner) { dataState ->
+//            setupRecyclerView(dataState)
+//        }
         viewModel.catDrinkState.observe(viewLifecycleOwner) { dataState ->
             setupRecyclerView(dataState)
         }
     }
 
 
-    private fun searchView() = mBinding.run {
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(text: String?): Boolean {
-                return false
-            }
 
-            override fun onQueryTextChange(text: String?): Boolean {
-                if (text != null) {
-                    if (text.isNotEmpty()) {
-                        viewModel.search(text, progressBarHolder, no_cocktail_title)
-                    }
-                    else {
-                        viewModel.start(progressBarHolder)
-                    }
-                }
-                else {
-                    viewModel.start(progressBarHolder)
-                }
-                return false
-            }
-        })
-    }
 
     private fun setupRecyclerView(drinkDataLocalMods: List<DrinkNet>) {
         mBinding.list.apply {

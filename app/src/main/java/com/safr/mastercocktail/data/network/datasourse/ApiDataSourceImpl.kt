@@ -13,8 +13,8 @@ class ApiDataSourceImpl @Inject constructor(
     private val api: CocktailApi
 ) : ApiDataSource {
 
-    override suspend fun getCocktails(type: String): DrinkListNet? {
-        return api.getCocktails(type).to()
+    override suspend fun getRandom(): DrinkListNet? {
+        return api.getRandom().to()
     }
 
     override suspend fun searchCocktails(type: String): DrinkListNet? {

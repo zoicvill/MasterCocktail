@@ -37,7 +37,6 @@ class CocktailDetailAdapter @Inject constructor() :
         RecyclerView.ViewHolder(viewCat.root) {
         fun bind(position: Int) {
             mList[position].let {  viewCat.textView.text = it}
-            mList[position].let{Log.d("lol", "inner class VH $it")}
 
         }
 

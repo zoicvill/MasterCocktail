@@ -21,4 +21,5 @@ class MainActivity : AppCompatActivity() {
         bundle.putString("title","App")
         analytics.logEvent("app_started", bundle)
     }
+
 }

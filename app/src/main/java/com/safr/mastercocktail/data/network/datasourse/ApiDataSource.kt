@@ -7,7 +7,7 @@ import com.safr.mastercocktail.domain.model.api.DrinkListNet
 import retrofit2.http.Query
 
 interface ApiDataSource {
-    suspend fun getCocktails(type: String = "Cocktail") : DrinkListNet?
+    suspend fun getRandom() : DrinkListNet?
 
     suspend fun searchCocktails(type: String = "") : DrinkListNet?
 

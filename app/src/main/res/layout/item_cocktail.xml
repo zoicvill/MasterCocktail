@@ -51,30 +51,6 @@
                 android:textSize="24sp"
                 android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/drinkGlassTest"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginBottom="16dp"
-                android:fontFamily="serif"
-                android:text="Cocktail"
-                android:textColor="#000000"
-                android:textSize="20sp"
-                android:visibility="gone" />
-
-            <TextView
-                android:id="@+id/drinkInst"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginBottom="24dp"
-                android:fontFamily="serif"
-                android:text="TextView"
-                android:textColor="#000000"
-                android:textSize="16sp"
-                android:visibility="gone" />
-
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

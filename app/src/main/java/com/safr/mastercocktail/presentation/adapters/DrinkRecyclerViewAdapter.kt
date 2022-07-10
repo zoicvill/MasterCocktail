@@ -6,14 +6,13 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.safr.mastercocktail.databinding.ItemCocktailBinding
-import com.safr.mastercocktail.databinding.ItemListCocktailBinding
 import com.safr.mastercocktail.domain.model.api.DrinkNet
 
 class DrinkRecyclerViewAdapter : RecyclerView.Adapter<DrinkRecyclerViewAdapter.ViewHolder>() {
 
     private var mValues = ArrayList<DrinkNet>()
     private var mOldValues = ArrayList<DrinkNet>()
-    private lateinit var onClick: DrinkListClickListener
+    private lateinit var onClick: Listener
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
@@ -27,21 +26,17 @@ class DrinkRecyclerViewAdapter : RecyclerView.Adapter<DrinkRecyclerViewAdapter.V
 
 
     fun setList(
-        valuesSet: List<DrinkNet>, onClickSet: DrinkListClickListener,
+        valuesSet: List<DrinkNet>, onClickSet: Listener,
         diffCallback: DiffCallback<DrinkNet>
     ) {
 
         mValues.clear()
         mValues.addAll(valuesSet)
         notifyDataSetChanged()
-
         mOldValues.clear()
         mOldValues.addAll(mValues)
 
         onClick = onClickSet
-//        val diffCallback = DiffCallback(values, valuesSet)
-//        val diffResult = DiffUtil.calculateDiff(diffCallback)
-//        diffResult.dispatchUpdatesTo(this)
 
         val diffResult: DiffUtil.DiffResult = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
             override fun getOldListSize(): Int {
@@ -100,10 +95,6 @@ class DrinkRecyclerViewAdapter : RecyclerView.Adapter<DrinkRecyclerViewAdapter.V
                 }
             }
         }
-    }
-
-    interface DrinkListClickListener {
-        fun onClickDrinkList(drinkId: Int)
     }
 
 }

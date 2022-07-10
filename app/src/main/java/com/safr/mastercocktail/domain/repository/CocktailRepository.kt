@@ -11,7 +11,7 @@ import retrofit2.http.Query
 
 interface CocktailRepository {
 
-    suspend fun getCocktails(): Flow<DataState<DrinkListNet?>>
+    suspend fun getRandom(): Flow<DataState<DrinkListNet?>>
 
     suspend fun searchCocktails(name: String): Flow<DataState<DrinkListNet?>>
 

@@ -9,7 +9,6 @@ import com.google.firebase.ktx.Firebase
 import com.safr.mastercocktail.core.DataState
 import com.safr.mastercocktail.data.local.datasourse.LocalDataSource
 import com.safr.mastercocktail.data.network.datasourse.ApiDataSource
-import com.safr.mastercocktail.data.network.model.DrinkListNetMod
 import com.safr.mastercocktail.domain.model.api.CatModelListNet
 import com.safr.mastercocktail.domain.model.api.DetailListDrinkNet
 import com.safr.mastercocktail.domain.model.api.DrinkListNet
@@ -31,13 +30,13 @@ class CocktailRepositoryImpl @Inject constructor(
 
     private var analytics: FirebaseAnalytics = Firebase.analytics
 
-    override suspend fun getCocktails(): Flow<DataState<DrinkListNet?>> = flow {
+    override suspend fun getRandom(): Flow<DataState<DrinkListNet?>> = flow {
         val bundle = Bundle()
-        bundle.putString("function", "getCocktails")
+        bundle.putString("function", "getRandom")
         analytics.logEvent("repository_called", bundle)
 
         emit(DataState.Loading)
-        emit(DataState.Success(api.getCocktails()))
+        emit(DataState.Success(api.getRandom()))
     }.catch { emit(DataState.Error(it)) }
         .flowOn(Dispatchers.IO)
 

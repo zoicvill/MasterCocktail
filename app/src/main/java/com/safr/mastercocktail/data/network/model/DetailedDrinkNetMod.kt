@@ -64,7 +64,7 @@ data class DetailedDrinkNetMod(
             strInstructions = strInstructions,
             strDrinkThumb = strDrinkThumb,
             strImageSource = strImageSource,
-            listIngredients = listOf(
+            listIngredients = listOfNotNull(
                 strIngredient1,
                 strIngredient2,
                 strIngredient3,
