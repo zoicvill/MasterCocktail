@@ -8,4 +8,5 @@
     <string name="title_notifications">Notifications</string>
     <string name="margarita">Margarita</string>
     <string name="random_cocktail">Random Cocktail</string>
+    <string name="no_results">No results! :(</string>
 </resources>
