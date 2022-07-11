@@ -2,15 +2,17 @@
 
 Использует фрагменты для отображения списка и изображения Стек
 
-Kotlin;
-Clean + MVVM;
-Navigation Component;
-Retrofit2;
-Room;
-Gson;
-Glide;
-OkHttpClient
-Hilt
-Firebase
-Coroutines
-Flow
+
+- Kotlin;
+- Clean + MVVM;
+- Navigation Component;
+- Retrofit2;
+- SQLite;
+- Room;
+- Gson;
+- Glide;
+- OkHttpClient
+- Hilt
+- Firebase
+- Coroutines
+- Flow
