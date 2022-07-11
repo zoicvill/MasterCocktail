@@ -16,6 +16,10 @@
 - Firebase
 - Coroutines
 - Flow
+
+<div align="center">
+    <img src="image/Screenshot_20220710_234730.png" width="400px"</img> 
+</div>
 ![Screenshot](image/Screenshot_20220710_234817.png)
 ![Screenshot](image/Screenshot_20220710_234730.png)
 ![Screenshot](image/Screenshot_20220710_234806.png)
