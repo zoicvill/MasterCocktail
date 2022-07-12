@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.SearchView
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
@@ -47,23 +48,39 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryClickListener, List
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.categoryState(mBinding.progressBarHolder)
+//        viewModel.categoryState(mBinding.progressBarHolder)
         subscribeObservers()
         searchView()
+        randomCocktail()
+    }
+
+    private fun randomCocktail() {
         mBinding.buttonRandom.setOnClickListener {
-            viewModel.getRandomState.observe(viewLifecycleOwner){
+            viewModel.rand()
+            viewModel.getRandomState.observe(viewLifecycleOwner) {
                 onClickDrinkList(it[0].idDrink)
             }
         }
     }
 
     private fun subscribeObservers() {
-        viewModel.start(mBinding.progressBarHolder)
         viewModel.categoryLive.observe(viewLifecycleOwner) {
             createAdapter(it)
         }
         viewModel.searchDataState.observe(viewLifecycleOwner) { dataState ->
+            mBinding.noCocktailTitle.isVisible = dataState.isNullOrEmpty()
             setupRecyclerView(dataState)
+        }
+        viewModel.isDataLoading.observe(viewLifecycleOwner) { loading ->
+            mBinding.progressBarHolder.isVisible = loading
+        }
+
+        viewModel.isError.observe(viewLifecycleOwner) { error ->
+            if (error){
+                val bundle = bundleOf("param" to "tab")
+                Navigation.findNavController(requireView())
+                    .navigate(R.id.action_tabFragment_to_errorFragment, bundle)
+            }
         }
     }
 
@@ -105,14 +122,16 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryClickListener, List
             override fun onQueryTextChange(text: String?): Boolean {
                 if (text != null) {
                     if (text.isNotEmpty()) {
-                        viewModel.search(text, progressBarHolder, mBinding.noCocktailTitle)
+                        viewModel.search(text)
                     }
                     else {
-                        viewModel.categoryState(mBinding.progressBarHolder)
+                        viewModel.categoryLive
+//                        viewModel.categoryState(mBinding.progressBarHolder)
                     }
                 }
                 else {
-                    viewModel.categoryState(mBinding.progressBarHolder)
+                    viewModel.categoryLive
+//                    viewModel.categoryState(mBinding.progressBarHolder)
                 }
                 return false
             }

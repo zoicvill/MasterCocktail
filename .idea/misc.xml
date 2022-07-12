@@ -22,12 +22,14 @@
         <entry key="..\:/MasterCocktail/app/src/main/res/layout/fragment_category.xml" value="0.2" />
         <entry key="..\:/MasterCocktail/app/src/main/res/layout/fragment_cocktail_detail.xml" value="0.264" />
         <entry key="..\:/MasterCocktail/app/src/main/res/layout/fragment_cocktail_list.xml" value="0.25416666666666665" />
+        <entry key="..\:/MasterCocktail/app/src/main/res/layout/fragment_error.xml" value="0.25416666666666665" />
         <entry key="..\:/MasterCocktail/app/src/main/res/layout/fragment_fav_cocktail_list.xml" value="0.24010416666666667" />
         <entry key="..\:/MasterCocktail/app/src/main/res/layout/fragment_tab.xml" value="0.25416666666666665" />
         <entry key="..\:/MasterCocktail/app/src/main/res/layout/item_cocktail.xml" value="0.25416666666666665" />
         <entry key="..\:/MasterCocktail/app/src/main/res/layout/item_ingredients.xml" value="0.19413919413919414" />
         <entry key="..\:/MasterCocktail/app/src/main/res/layout/item_list_cocktail.xml" value="0.253125" />
         <entry key="..\:/MasterCocktail/app/src/main/res/layout/item_view_category.xml" value="0.22592592592592592" />
+        <entry key="..\:/MasterCocktail/app/src/main/res/layout/item_view_error.xml" value="0.253125" />
         <entry key="..\:/MasterCocktail/app/src/main/res/menu/bottom_nav_menu.xml" value="0.25416666666666665" />
       </map>
     </option>

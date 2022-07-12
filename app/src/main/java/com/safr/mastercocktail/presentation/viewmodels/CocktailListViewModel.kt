@@ -21,18 +21,6 @@ class CocktailListViewModel @Inject constructor(
     application: Application
 ) : AndroidViewModel(application) {
 
-
-//    private val dataStateMut: MutableLiveData<List<DrinkNet>> = MutableLiveData()
-//
-//    val getRandomState: LiveData<List<DrinkNet>>
-//        get() = dataStateMut
-
-//    private val searchdataStateMut: MutableLiveData<List<DrinkNet>> = MutableLiveData()
-//
-//    val searchDataState: LiveData<List<DrinkNet>>
-//        get() = searchdataStateMut
-
-
     private val catDrinkMut: MutableLiveData<
             List<DrinkNet>> = MutableLiveData()
 

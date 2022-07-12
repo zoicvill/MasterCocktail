@@ -57,11 +57,7 @@ class CocktailDetailViewModel @Inject constructor(
                         }
                     }
                 }.launchIn(viewModelScope)
-
-//            checkDB.checkIfFavourite(idMut.value ?: 15346)
-//                .onEach { state -> mutFavour.postValue(state) }.launchIn(viewModelScope)
             checkStar()
-//            checkStar(viewImage, star, unStar)
         }
 
     }
