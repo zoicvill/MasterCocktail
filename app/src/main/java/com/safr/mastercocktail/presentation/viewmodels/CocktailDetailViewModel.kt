@@ -78,7 +78,7 @@ class CocktailDetailViewModel @Inject constructor(
 //                            mutIsDataLoading.postValue(false)
 //                            mutIsError.postValue(true)
                         }
-                        is DataState.Loading -> mutIsDataLoading.postValue(true)
+                        is DataState.Loading -> mutIsDataLoading.postValue(false)
                         is DataState.Success -> {
                             mutFavour.postValue(state.data)
                             mutIsDataLoading.postValue(false)

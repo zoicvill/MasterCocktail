@@ -59,7 +59,7 @@ class ErrorFragment : Fragment() {
             if (isNetworkAvailable) lifecycleScope.launch {
                 when (param) {
                     "detail" -> {
-                            delay(5000)
+                            delay(2000)
                             findNavController().safeNavigate(
                                 ErrorFragmentDirections.actionErrorFragmentToCocktailDetailFragment(
                                     drinkId = drinkId ?: 15346
@@ -67,11 +67,11 @@ class ErrorFragment : Fragment() {
                             )
                     }
                     "category" -> {
-                        delay(5000)
+                        delay(2000)
                         findNavController().safeNavigate(ErrorFragmentDirections.actionErrorFragmentToTabFragment())
                     }
                     "list" -> {
-                        delay(5000)
+                        delay(2000)
                         findNavController().safeNavigate(
                             ErrorFragmentDirections.actionErrorFragmentToCocktailListFragment(
                                 nameCat

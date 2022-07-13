@@ -10,6 +10,7 @@ import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.lifecycle.asFlow
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
@@ -77,11 +78,6 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryClickListener,
             createAdapter(it)
         }
 
-        viewModel.searchDataState.observe(viewLifecycleOwner) { dataState ->
-            mBinding.noCocktailTitle.isVisible = dataState.isNullOrEmpty()
-            setupRecyclerView(dataState)
-        }
-
         viewModel.isDataLoading.observe(viewLifecycleOwner) { loading ->
             mBinding.progressBarHolder.isVisible = loading
         }
@@ -139,6 +135,11 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryClickListener,
                     if (text.isNotBlank()) {
                         Log.d("lol", "onQueryTextChange text.isNotBlank() $text")
                         viewModel.search(text)
+                        viewModel.searchDataState.observe(viewLifecycleOwner) { dataState ->
+                            mBinding.noCocktailTitle.isVisible = dataState.isNullOrEmpty()
+                            setupRecyclerView(dataState)
+                        }
+
                     }
                     else {
                         Log.d("lol", "onQueryTextChange else  $text")

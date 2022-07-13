@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.safr.mastercocktail.R
 import com.safr.mastercocktail.databinding.ItemCocktailBinding
 import com.safr.mastercocktail.domain.model.api.DrinkNet
 
@@ -50,6 +51,7 @@ class DrinkRecyclerViewAdapter : RecyclerView.Adapter<DrinkRecyclerViewAdapter.V
             drinkName.text = mValues[item].strDrink
             Glide.with(itemView.context)
                 .load(mValues[item].strDrinkThumb)
+                .placeholder(R.drawable.ic_martini_glass_citrus_solid)
                 .into(drinkImg)
 
             root.apply {
