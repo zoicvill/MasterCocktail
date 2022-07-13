@@ -11,7 +11,6 @@ import com.safr.mastercocktail.core.DataState
 import com.safr.mastercocktail.domain.model.api.DrinkNet
 import com.safr.mastercocktail.domain.usecases.api.CocktailCategoryUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,21 +20,31 @@ class CocktailListViewModel @Inject constructor(
     application: Application
 ) : AndroidViewModel(application) {
 
-    private val catDrinkMut: MutableLiveData<
-            List<DrinkNet>> = MutableLiveData()
+    private val catDrinkMut: MutableLiveData<List<DrinkNet>> = MutableLiveData()
 
     val catDrinkState: LiveData<List<DrinkNet>>
         get() = catDrinkMut
 
-    fun catDrinkFun(str: String?, view: RelativeLayout) {
+    private val mutIsDataLoading: MutableLiveData<Boolean> = MutableLiveData()
+    val isDataLoading: LiveData<Boolean> = mutIsDataLoading
+
+    private val mutIsError: MutableLiveData<Boolean> = MutableLiveData()
+    val isError: LiveData<Boolean> = mutIsError
+
+    fun catDrinkFun(str: String?) {
+        mutIsDataLoading.value = true
+        mutIsError.value = false
         viewModelScope.launch {
-            catDrink.getCocktailsCategories(str?: "Cocktail").collect { dataState ->
+            catDrink.getCocktailsCategories(str ?: "Cocktail").collect { dataState ->
                 when (dataState) {
-                    is DataState.Error -> DataState.Error(object : Error() {})
-                    DataState.Loading -> view.isVisible = true
+                    is DataState.Error -> dataState.exception.also {
+                        mutIsDataLoading.postValue(false)
+                        mutIsError.postValue(true)
+                    }
+                    DataState.Loading -> mutIsDataLoading.postValue(true)
                     is DataState.Success -> {
-                        catDrinkMut.value = dataState.data?.drinks
-                        view.isVisible = false
+                        catDrinkMut.postValue(dataState.data?.drinks)
+                        mutIsDataLoading.postValue(false)
                     }
 
                 }

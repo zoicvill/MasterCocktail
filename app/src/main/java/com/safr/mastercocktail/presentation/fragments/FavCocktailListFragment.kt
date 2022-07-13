@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DefaultItemAnimator
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
@@ -19,6 +20,7 @@ import com.safr.mastercocktail.R
 import com.safr.mastercocktail.databinding.FragmentFavCocktailListBinding
 import com.safr.mastercocktail.domain.model.data.DrinkData
 import com.safr.mastercocktail.presentation.adapters.FavDrinkRecyclerViewAdapter
+import com.safr.mastercocktail.presentation.viewmodels.ConnectionLiveData
 import com.safr.mastercocktail.presentation.viewmodels.FavCocktailListViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -33,6 +35,7 @@ class FavCocktailListFragment : Fragment(), FavDrinkRecyclerViewAdapter.FavDrink
 
     @Inject
     lateinit var mAdapter: FavDrinkRecyclerViewAdapter
+    private val connectionLiveData: ConnectionLiveData by viewModels()
 
     private var binding: FragmentFavCocktailListBinding? = null
     private val mBinding get() = binding!!
@@ -41,8 +44,8 @@ class FavCocktailListFragment : Fragment(), FavDrinkRecyclerViewAdapter.FavDrink
         super.onCreate(savedInstanceState)
         analytics = Firebase.analytics
         Log.d("lol", "FavCocktailListFragment onCreate")
-        analytics.logEvent("fragment_open"){
-          param("name", "cocktail_fav_list")
+        analytics.logEvent("fragment_open") {
+            param("name", "cocktail_fav_list")
         }
     }
 
@@ -68,6 +71,16 @@ class FavCocktailListFragment : Fragment(), FavDrinkRecyclerViewAdapter.FavDrink
                 createAdapter(dataState)
             }
         }
+        connectionLiveData.connect.observe(viewLifecycleOwner){ error ->
+            Log.d("lol", " connectionLiveData")
+            if (!error) {
+                findNavController().navigate(
+                    TabFragmentDirections.actionTabFragmentToErrorFragment(
+                        "category"
+                    )
+                )
+            }
+        }
     }
 
     private fun createAdapter(drinkDataLocalMods: List<DrinkData>?) = mBinding.run {
@@ -80,8 +93,10 @@ class FavCocktailListFragment : Fragment(), FavDrinkRecyclerViewAdapter.FavDrink
     }
 
     override fun onClickDrinkList(drinkId: Int?) {
-        val bundle = bundleOf("drinkId" to drinkId)
-        Navigation.findNavController(this.requireView())
-            .navigate(R.id.action_tabFragment_to_cocktailDetailFragment, bundle)
+        findNavController().navigate(
+            TabFragmentDirections.actionTabFragmentToCocktailDetailFragment(
+                drinkId = drinkId ?: 15346
+            )
+        )
     }
 }

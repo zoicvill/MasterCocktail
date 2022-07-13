@@ -1,8 +1,6 @@
 package com.safr.mastercocktail.presentation.viewmodels
 
 import android.app.Application
-import android.widget.RelativeLayout
-import androidx.core.view.isVisible
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -35,29 +33,38 @@ class CocktailDetailViewModel @Inject constructor(
     val detailListDrink: LiveData<DetailedDrinkNet>
         get() = mutListDrink
 
-    private val mutFavour: MutableLiveData<
-            Boolean?> = MutableLiveData()
+    private val mutFavour: MutableLiveData<Boolean?> = MutableLiveData()
     val favourites: LiveData<Boolean?>
         get() = mutFavour
 
 
-    fun start(
-        id: Int,
-        view: RelativeLayout,
-    ) {
+    private val mutIsDataLoading: MutableLiveData<Boolean> = MutableLiveData()
+    val isDataLoading: LiveData<Boolean> = mutIsDataLoading
+
+    private val mutIsError: MutableLiveData<Boolean> = MutableLiveData()
+    val isError: LiveData<Boolean> = mutIsError
+
+
+    fun start(id: Int) {
+        mutIsDataLoading.postValue(true)
+        mutIsError.postValue(false)
         idMut.value = id
         viewModelScope.launch {
             cocktailDetApi.getCocktailDetails(idMut.value ?: 15346)
                 .onEach { state ->
                     when (state) {
-                        is DataState.Error -> object : Error() {}
-                        DataState.Loading -> view.isVisible = true
+                        is DataState.Error -> state.exception.also {
+                            mutIsDataLoading.postValue(false)
+                            mutIsError.postValue(true)
+                        }
+                        is DataState.Loading -> mutIsDataLoading.postValue(true)
                         is DataState.Success -> {
                             mutListDrink.postValue(state.data?.drinks?.last())
+                            mutIsDataLoading.postValue(false)
+                            checkStar()
                         }
                     }
                 }.launchIn(viewModelScope)
-            checkStar()
         }
 
     }
@@ -67,41 +74,61 @@ class CocktailDetailViewModel @Inject constructor(
             checkDB.checkIfFavourite(idMut.value ?: 15346)
                 .onEach { state ->
                     when (state) {
-                        is DataState.Success ->{
-                            mutFavour.postValue(state.data)
+                        is DataState.Error -> state.exception.also {
+//                            mutIsDataLoading.postValue(false)
+//                            mutIsError.postValue(true)
                         }
-                        else -> {}
+                        is DataState.Loading -> mutIsDataLoading.postValue(true)
+                        is DataState.Success -> {
+                            mutFavour.postValue(state.data)
+                            mutIsDataLoading.postValue(false)
+                        }
                     }
                 }.launchIn(viewModelScope)
         }
     }
 
-    fun addCocktailToFavourit() {
+    fun addCocktailToFavourite() {
         viewModelScope.launch {
             cocktailDetApi.getCocktailDetails(idMut.value ?: 15346)
                 .onEach { state ->
                     when (state) {
+                        is DataState.Error -> state.exception.also {
+                            mutIsDataLoading.postValue(false)
+                            mutIsError.postValue(true)
+                        }
+                        is DataState.Loading -> {
+                            mutIsDataLoading.postValue(false)
+                        }
                         is DataState.Success -> {
                             addDb.addToFavourites(DrinkData(state.data?.drinks!![0]))
                             checkStar()
+                            mutIsDataLoading.postValue(false)
                         }
-                        else -> {}
+
                     }
                 }.launchIn(viewModelScope)
         }
     }
 
 
-    fun removeCocktailFromFavourit() {
+    fun removeCocktailFromFavourite() {
         viewModelScope.launch {
             cocktailDetApi.getCocktailDetails(idMut.value ?: 15346)
                 .onEach { state ->
                     when (state) {
+                        is DataState.Error -> state.exception.also {
+                            mutIsDataLoading.postValue(false)
+                            mutIsError.postValue(true)
+                        }
+                        is DataState.Loading -> {
+                            mutIsDataLoading.postValue(false)
+                        }
                         is DataState.Success -> {
                             removeDb.removeFromFavourites(DrinkData(state.data?.drinks!![0]))
                             checkStar()
+                            mutIsDataLoading.postValue(false)
                         }
-                        else -> {}
                     }
                 }.launchIn(viewModelScope)
         }

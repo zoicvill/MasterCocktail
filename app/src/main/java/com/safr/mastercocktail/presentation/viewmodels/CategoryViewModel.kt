@@ -2,16 +2,8 @@ package com.safr.mastercocktail.presentation.viewmodels
 
 import android.app.Application
 import android.util.Log
-import android.view.View
-import android.widget.TextView
 import androidx.core.os.bundleOf
-import androidx.core.view.isVisible
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
-import androidx.navigation.Navigation
-import com.safr.mastercocktail.R
+import androidx.lifecycle.*
 import com.safr.mastercocktail.core.DataState
 import com.safr.mastercocktail.domain.model.api.CategoryNet
 import com.safr.mastercocktail.domain.model.api.DrinkNet
@@ -19,7 +11,6 @@ import com.safr.mastercocktail.domain.usecases.api.CategoryApiUseCases
 import com.safr.mastercocktail.domain.usecases.api.GetRandomApiUseCases
 import com.safr.mastercocktail.domain.usecases.api.SearchCocktailsApiUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -50,9 +41,12 @@ class CategoryViewModel @Inject constructor(
     private val mutIsError: MutableLiveData<Boolean> = MutableLiveData()
     val isError: LiveData<Boolean> = mutIsError
 
+
     init {
         load()
+
     }
+
 
     private fun load() {
         mutIsDataLoading.value = true
@@ -93,48 +87,6 @@ class CategoryViewModel @Inject constructor(
             }
         }
     }
-
-//    fun categoryState(view: View) {
-//        viewModelScope.launch {
-//            category.getCategory().onEach { cat ->
-//                when (cat) {
-//                    is DataState.Error -> cat.exception.also {
-//                        Log.d("lol", "categoryState ${cat.exception}")
-//                        Navigation.findNavController(view.rootView)
-//                            .navigate(R.id.action_tabFragment_to_errorFragment)
-//                        view.isVisible = false
-//                    }
-//                    DataState.Loading -> view.isVisible = true
-//                    is DataState.Success -> {
-//                        mutCategory.postValue(cat.data?.cat)
-//                        view.isVisible = false
-//                    }
-//                }
-//            }.launchIn(viewModelScope)
-//
-//        }
-//    }
-
-//    fun random(view: View) {
-//        viewModelScope.launch {
-//            getRandom.getCocktails().collect { dataState ->
-//                when (dataState) {
-//                    is DataState.Error -> dataState.exception.also {
-////                        Navigation.findNavController(view)
-////                            .navigate(R.id.action_tabFragment_to_errorFragment)
-//                        view.isVisible = false
-//                        Log.d("lol", "start ${dataState.exception}")
-//                    }
-//                    DataState.Loading -> view.isVisible = true
-//                    is DataState.Success -> {
-//                        mutDataStateRandom.value = dataState.data?.drinks
-//                        view.isVisible = false
-//                    }
-//                }
-//            }
-//        }
-//    }
-
 
     fun search(name: String) {
         viewModelScope.launch {

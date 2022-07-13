@@ -1,46 +1,41 @@
 package com.safr.mastercocktail.presentation.fragments
 
-import android.content.Context
-import android.net.ConnectivityManager
 import android.os.Bundle
-import android.os.CountDownTimer
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import com.safr.mastercocktail.databinding.FragmentErrorBinding
 import com.safr.mastercocktail.presentation.viewmodels.ConnectionLiveData
-import com.safr.mastercocktail.presentation.viewmodels.ErrorViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 private const val ARG_PARAM1 = "param"
 
 @AndroidEntryPoint
 class ErrorFragment : Fragment() {
 
-    private var param1: String? = null
+    private var param: String? = null
+    private var nameCat: String? = null
+    private var drinkId: Int? = null
 
     private var binding: FragmentErrorBinding? = null
     private val mBinding get() = binding!!
 
-    private val viewModel: ErrorViewModel by viewModels()
-
-    @Inject
-    lateinit var connectionLiveData: ConnectionLiveData
+    private val connectionLiveData: ConnectionLiveData by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-        }
+        nameCat = arguments?.let { ErrorFragmentArgs.fromBundle(it).nameCat }
+        param = arguments?.let { ErrorFragmentArgs.fromBundle(it).param }
+        drinkId = arguments?.let { ErrorFragmentArgs.fromBundle(it).drinkId }
     }
 
     override fun onCreateView(
@@ -53,64 +48,48 @@ class ErrorFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        subscribeObservers()
         reload()
+        Log.d("lol", "ErrorFragment nameCat $nameCat  param $param")
     }
 
     private fun reload() {
-        connectionLiveData.observe(viewLifecycleOwner) { isNetworkAvailable ->
-            isNetworkAvailable?.let {
-//                updateUI(it)
-//                viewModel.start()
-//                subscribeObservers()
-                when (param1) {
+
+        connectionLiveData.connect.observe(viewLifecycleOwner) { isNetworkAvailable ->
+
+            if (isNetworkAvailable) lifecycleScope.launch {
+                when (param) {
                     "detail" -> {
-                        findNavController().safeNavigate(ErrorFragmentDirections.actionErrorFragmentToCocktailDetailFragment())
+                            delay(5000)
+                            findNavController().safeNavigate(
+                                ErrorFragmentDirections.actionErrorFragmentToCocktailDetailFragment(
+                                    drinkId = drinkId ?: 15346
+                                )
+                            )
                     }
-                    "tab" -> {
+                    "category" -> {
+                        delay(5000)
                         findNavController().safeNavigate(ErrorFragmentDirections.actionErrorFragmentToTabFragment())
                     }
                     "list" -> {
-                        findNavController().safeNavigate(ErrorFragmentDirections.actionErrorFragmentToCocktailListFragment())
+                        delay(5000)
+                        findNavController().safeNavigate(
+                            ErrorFragmentDirections.actionErrorFragmentToCocktailListFragment(
+                                nameCat
+                            )
+                        )
                     }
                 }
             }
         }
     }
 
-
-//    private fun subscribeObservers() {
-//
-//        viewModel.isDataLoading.observe(viewLifecycleOwner) {
-//            mBinding.swipe.isRefreshing = it
-//        }
-//
-//        viewModel.isSuccess.observe(viewLifecycleOwner) { success ->
-//            Log.d("lol", "ErrorFragment viewModel.isSuccess $success bb $param1 ")
-//            if (success) {
-//                when (param1) {
-//                    "detail" -> {
-//                        findNavController().safeNavigate(ErrorFragmentDirections.actionErrorFragmentToCocktailDetailFragment())
-//                    }
-//                    "tab" -> {
-//                        findNavController().safeNavigate(ErrorFragmentDirections.actionErrorFragmentToTabFragment())
-//                    }
-//                    "list" -> {
-//                        findNavController().safeNavigate(ErrorFragmentDirections.actionErrorFragmentToCocktailListFragment())
-//                    }
-//                }
-//            }
-//        }
-//
-//    }
-
     /*
     * защита от двойного срабатывания хоть можно сделать просто через менеджер
     * */
     fun NavController.safeNavigate(direction: NavDirections) {
-        Log.d("lol", "Click happened")
+        Log.d("lol", "ErrorFragment Click happened")
         currentDestination?.getAction(direction.actionId)?.run {
-            Log.d("lol", "Click Propagated")
+            Log.d("lol", "ErrorFragment Click Propagated")
             navigate(direction)
         }
     }

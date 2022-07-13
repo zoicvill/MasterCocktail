@@ -1,13 +1,16 @@
 package com.safr.mastercocktail.presentation.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DefaultItemAnimator
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
@@ -19,6 +22,7 @@ import com.safr.mastercocktail.presentation.adapters.DiffCallback
 import com.safr.mastercocktail.presentation.adapters.DrinkRecyclerViewAdapter
 import com.safr.mastercocktail.presentation.adapters.Listener
 import com.safr.mastercocktail.presentation.viewmodels.CocktailListViewModel
+import com.safr.mastercocktail.presentation.viewmodels.ConnectionLiveData
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -34,6 +38,7 @@ class CocktailListFragment : Fragment(), Listener {
     private var nameCat: String? = null
 
     private val viewModel: CocktailListViewModel by viewModels()
+    private val connectionLiveData: ConnectionLiveData by viewModels()
 
     private lateinit var analytics: FirebaseAnalytics
 
@@ -42,9 +47,10 @@ class CocktailListFragment : Fragment(), Listener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            nameCat = it.getString(ARG_PARAM1)
-        }
+//        arguments?.let {
+//            nameCat = it.getString(ARG_PARAM1)
+//        }
+        nameCat = arguments?.let { CocktailListFragmentArgs.fromBundle(it).nameCat }
         analytics = Firebase.analytics
     }
 
@@ -58,20 +64,39 @@ class CocktailListFragment : Fragment(), Listener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.catDrinkFun(nameCat, mBinding.progressBarHolder)
+        viewModel.catDrinkFun(nameCat)
         subscribeObservers()
     }
 
     private fun subscribeObservers() {
-//        viewModel.searchDataState.observe(viewLifecycleOwner) { dataState ->
-//            setupRecyclerView(dataState)
-//        }
         viewModel.catDrinkState.observe(viewLifecycleOwner) { dataState ->
             setupRecyclerView(dataState)
         }
+        viewModel.isDataLoading.observe(viewLifecycleOwner) {
+            mBinding.progressBarHolder.isVisible = it
+        }
+        viewModel.isError.observe(viewLifecycleOwner) { error ->
+            if (error) {
+                Log.d("lol", "CocktailListFragment viewModel.isError.observe $error")
+                findNavController().navigate(
+                    CocktailListFragmentDirections.actionCocktailListFragmentToErrorFragment(
+                        "list", nameCat?: "Cocktail"
+                    )
+                )
+            }
+        }
+        connectionLiveData.connect.observe(viewLifecycleOwner){ error ->
+
+            if (!error) {
+                Log.d("lol", " connectionLiveData")
+                findNavController().navigate(
+                    CocktailListFragmentDirections.actionCocktailListFragmentToErrorFragment(
+                        "list", nameCat?: "Cocktail"
+                    )
+                )
+            }
+        }
     }
-
-
 
 
     private fun setupRecyclerView(drinkDataLocalMods: List<DrinkNet>) {

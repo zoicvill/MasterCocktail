@@ -11,6 +11,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DefaultItemAnimator
 import com.safr.mastercocktail.R
 import com.safr.mastercocktail.databinding.FragmentCategoryBinding
@@ -21,6 +22,7 @@ import com.safr.mastercocktail.presentation.adapters.DiffCallback
 import com.safr.mastercocktail.presentation.adapters.DrinkRecyclerViewAdapter
 import com.safr.mastercocktail.presentation.adapters.Listener
 import com.safr.mastercocktail.presentation.viewmodels.CategoryViewModel
+import com.safr.mastercocktail.presentation.viewmodels.ConnectionLiveData
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -32,11 +34,19 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryClickListener, List
 
     private val viewModel: CategoryViewModel by viewModels()
 
+    private val connectionLiveData: ConnectionLiveData by viewModels()
+
     @Inject
     lateinit var mAdapter: CategoryAdapter
 
     @Inject
     lateinit var mAdapterDrink: DrinkRecyclerViewAdapter
+
+    override fun onStart() {
+        super.onStart()
+        Log.d("lol", "CategoryFragment onStart()")
+
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -48,7 +58,6 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryClickListener, List
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        viewModel.categoryState(mBinding.progressBarHolder)
         subscribeObservers()
         searchView()
         randomCocktail()
@@ -67,19 +76,34 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryClickListener, List
         viewModel.categoryLive.observe(viewLifecycleOwner) {
             createAdapter(it)
         }
+
         viewModel.searchDataState.observe(viewLifecycleOwner) { dataState ->
             mBinding.noCocktailTitle.isVisible = dataState.isNullOrEmpty()
             setupRecyclerView(dataState)
         }
+
         viewModel.isDataLoading.observe(viewLifecycleOwner) { loading ->
             mBinding.progressBarHolder.isVisible = loading
         }
 
         viewModel.isError.observe(viewLifecycleOwner) { error ->
-            if (error){
-                val bundle = bundleOf("param" to "tab")
-                Navigation.findNavController(requireView())
-                    .navigate(R.id.action_tabFragment_to_errorFragment, bundle)
+            if (error) {
+                Log.d("lol", " error viewModel.isError.observe")
+                findNavController().navigate(
+                    TabFragmentDirections.actionTabFragmentToErrorFragment(
+                        "category"
+                    )
+                )
+            }
+        }
+        connectionLiveData.connect.observe(viewLifecycleOwner){ error ->
+            if (!error) {
+                Log.d("lol", "if  connectionLiveData")
+                findNavController().navigate(
+                    TabFragmentDirections.actionTabFragmentToErrorFragment(
+                        "category"
+                    )
+                )
             }
         }
     }
@@ -126,12 +150,10 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryClickListener, List
                     }
                     else {
                         viewModel.categoryLive
-//                        viewModel.categoryState(mBinding.progressBarHolder)
                     }
                 }
                 else {
                     viewModel.categoryLive
-//                    viewModel.categoryState(mBinding.progressBarHolder)
                 }
                 return false
             }
@@ -142,6 +164,8 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryClickListener, List
         val bundle = bundleOf("nameCat" to nameCat)
         Navigation.findNavController(this.requireView())
             .navigate(R.id.action_tabFragment_to_cocktailListFragment, bundle)
+//        findNavController().navigate(TabFragmentDirections.actionTabFragmentToCocktailListFragment(nameCat))
+
         Log.d("lol", " onClick $nameCat")
     }
 

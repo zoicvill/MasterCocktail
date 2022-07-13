@@ -1,14 +1,16 @@
 package com.safr.mastercocktail.presentation.viewmodels
 
-import android.content.Context
+import android.app.Application
 import android.content.Context.CONNECTIVITY_SERVICE
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities.NET_CAPABILITY_INTERNET
 import android.net.NetworkRequest
 import android.util.Log
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import dagger.hilt.android.qualifiers.ApplicationContext
+import androidx.lifecycle.MutableLiveData
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -18,20 +20,35 @@ import java.net.InetSocketAddress
 import javax.inject.Inject
 import javax.net.SocketFactory
 
-const val TAG = "MyTagConnectionManager"
+const val TAG = "pot"
 
-class ConnectionLiveData @Inject constructor(@ApplicationContext context: Context) : LiveData<Boolean>() {
+@HiltViewModel
+class ConnectionLiveData @Inject constructor(
+
+    context: Application
+) : AndroidViewModel(context) {
+
+    private val mutConnect: MutableLiveData<Boolean> = MutableLiveData()
+    val connect: LiveData<Boolean> = mutConnect
 
     private lateinit var networkCallback: ConnectivityManager.NetworkCallback
     private val connectivityManager =
         context.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
     private val validNetworks: MutableSet<Network> = HashSet()
 
-    private fun checkValidNetworks() {
-        postValue(validNetworks.size > 0)
+    init {
+        Log.d(TAG, "ConnectionLiveData init ")
     }
 
-    override fun onActive() {
+    private fun checkValidNetworks() {
+        mutConnect.postValue(validNetworks.size > 0)
+    }
+
+    init {
+        onActive()
+    }
+
+    private fun onActive() {
         networkCallback = createNetworkCallback()
         val networkRequest = NetworkRequest.Builder()
             .addCapability(NET_CAPABILITY_INTERNET)
@@ -39,7 +56,13 @@ class ConnectionLiveData @Inject constructor(@ApplicationContext context: Contex
         connectivityManager.registerNetworkCallback(networkRequest, networkCallback)
     }
 
-    override fun onInactive() {
+    override fun onCleared() {
+        super.onCleared()
+        connectivityManager.unregisterNetworkCallback(networkCallback)
+
+    }
+
+    private fun onInactive() {
         connectivityManager.unregisterNetworkCallback(networkCallback)
     }
 
@@ -85,7 +108,7 @@ class ConnectionLiveData @Inject constructor(@ApplicationContext context: Contex
                 Log.d(TAG, "PING success.")
                 true
             } catch (e: IOException) {
-                Log.e(TAG, "No Internet Connection. $e")
+                Log.e(TAG, "No Internet ConnectionSource. $e")
                 false
             }
         }

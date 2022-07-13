@@ -68,6 +68,20 @@
         tools:layout_editor_absoluteX="8dp"
         tools:visibility="gone" />
 
+    <TextView
+        android:id="@+id/error"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ошибка сервера"
+        android:textColor="#FF1100"
+        android:textSize="34sp"
+        android:textStyle="italic"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/test"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/buttonRandom" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/test"
         android:layout_width="0dp"

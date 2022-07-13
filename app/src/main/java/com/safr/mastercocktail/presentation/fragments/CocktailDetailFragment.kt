@@ -7,8 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DefaultItemAnimator
 import com.bumptech.glide.Glide
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -19,6 +21,7 @@ import com.safr.mastercocktail.databinding.FragmentCocktailDetailBinding
 import com.safr.mastercocktail.domain.model.api.DetailedDrinkNet
 import com.safr.mastercocktail.presentation.adapters.CocktailDetailAdapter
 import com.safr.mastercocktail.presentation.viewmodels.CocktailDetailViewModel
+import com.safr.mastercocktail.presentation.viewmodels.ConnectionLiveData
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -37,6 +40,7 @@ class CocktailDetailFragment : Fragment() {
     private lateinit var analytics: FirebaseAnalytics
 
     private val viewModel: CocktailDetailViewModel by viewModels()
+    private val connectionLiveData: ConnectionLiveData by viewModels()
 
     @Inject
     lateinit var mAdapter: CocktailDetailAdapter
@@ -44,9 +48,7 @@ class CocktailDetailFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            drinkId = it.getInt(ARG_PARAM1)
-        }
+        drinkId = arguments?.let { CocktailDetailFragmentArgs.fromBundle(it).drinkId }
         Log.d("lol", "CocktailDetailFragment $drinkId")
         analytics = Firebase.analytics
 
@@ -65,24 +67,22 @@ class CocktailDetailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.start(
-            drinkId ?: 15346,
-            mBinding.progressBarHolder,
-        )
+        mBinding.allView.isVisible = false
+        viewModel.start(drinkId ?: 15346)
         subscribeObservers()
         like()
 
     }
 
-    private fun like() = mBinding.run {
-        likeStar.setOnClickListener {
+    private fun like() {
+        mBinding.likeStar.setOnClickListener {
             Log.d("lol", "viewmodel like()  $isFavourite")
             if (isFavourite) {
-                viewModel.removeCocktailFromFavourit()
+                viewModel.removeCocktailFromFavourite()
                 Toast.makeText(context, "Removed from Favourites!", Toast.LENGTH_SHORT).show()
             }
             else {
-                viewModel.addCocktailToFavourit()
+                viewModel.addCocktailToFavourite()
                 Toast.makeText(context, "Added to Favourites!", Toast.LENGTH_SHORT).show()
             }
         }
@@ -108,7 +108,9 @@ class CocktailDetailFragment : Fragment() {
     }
 
     private fun subscribeObservers() = mBinding.run {
+
         viewModel.detailListDrink.observe(viewLifecycleOwner) { dataState ->
+            Log.d("lol", "detailListDrink.observe  $isFavourite")
             displayData(dataState)
         }
         viewModel.favourites.observe(viewLifecycleOwner) {
@@ -116,6 +118,35 @@ class CocktailDetailFragment : Fragment() {
             isFavourite = it ?: false
             Log.d("lol", "favourites.observe  $isFavourite")
         }
+        viewModel.isDataLoading.observe(viewLifecycleOwner){
+            mBinding.allView.isVisible = !it
+            mBinding.progressBarHolder.isVisible = it
+            Log.d("lol", "isDataLoading.observe  $it")
+        }
+
+        viewModel.isError.observe(viewLifecycleOwner){ error ->
+            if (error) {
+                findNavController().navigate(
+                    CocktailDetailFragmentDirections.actionCocktailDetailFragmentToErrorFragment(
+                        param = "detail",  drinkId = drinkId ?: 15346
+                    )
+                )
+            }
+
+        }
+
+        connectionLiveData.connect.observe(viewLifecycleOwner){ error ->
+            Log.d("lol", " connectionLiveData")
+            if (!error) {
+                findNavController().navigate(
+                    CocktailDetailFragmentDirections.actionCocktailDetailFragmentToErrorFragment(
+                        param = "detail",  drinkId = drinkId ?: 15346
+                    )
+                )
+            }
+        }
+
+
     }
 
 
@@ -136,16 +167,7 @@ class CocktailDetailFragment : Fragment() {
             .into(cocktailImage)
         cocktailInstructions.text = cocktail.strInstructions
         createAdapter(cocktail.listIngredients)
-        progressBarHolder.visibility = View.GONE
+//        progressBarHolder.visibility = View.GONE
     }
 
-    companion object {
-        @JvmStatic
-        fun newInstance(param1: String) =
-            CocktailDetailFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                }
-            }
-    }
 }
