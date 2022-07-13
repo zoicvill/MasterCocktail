@@ -10,6 +10,7 @@ import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.asFlow
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DefaultItemAnimator
@@ -18,16 +19,15 @@ import com.safr.mastercocktail.databinding.FragmentCategoryBinding
 import com.safr.mastercocktail.domain.model.api.CategoryNet
 import com.safr.mastercocktail.domain.model.api.DrinkNet
 import com.safr.mastercocktail.presentation.adapters.CategoryAdapter
-import com.safr.mastercocktail.presentation.adapters.DiffCallback
 import com.safr.mastercocktail.presentation.adapters.DrinkRecyclerViewAdapter
-import com.safr.mastercocktail.presentation.adapters.Listener
 import com.safr.mastercocktail.presentation.viewmodels.CategoryViewModel
 import com.safr.mastercocktail.presentation.viewmodels.ConnectionLiveData
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class CategoryFragment : Fragment(), CategoryAdapter.CategoryClickListener, Listener {
+class CategoryFragment : Fragment(), CategoryAdapter.CategoryClickListener,
+    DrinkRecyclerViewAdapter.Listener {
 
     private var binding: FragmentCategoryBinding? = null
     private val mBinding get() = binding!!
@@ -96,7 +96,7 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryClickListener, List
                 )
             }
         }
-        connectionLiveData.connect.observe(viewLifecycleOwner){ error ->
+        connectionLiveData.connect.observe(viewLifecycleOwner) { error ->
             if (!error) {
                 Log.d("lol", "if  connectionLiveData")
                 findNavController().navigate(
@@ -114,17 +114,7 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryClickListener, List
             itemAnimator = DefaultItemAnimator()
             adapter = mAdapterDrink
         }
-        val diffCallback = object : DiffCallback<DrinkNet>() {
-            override fun areItemsTheSame(oldItem: DrinkNet, newItem: DrinkNet): Boolean {
-                return oldItem.idDrink == newItem.idDrink
-            }
-
-            override fun areContentsTheSame(oldItem: DrinkNet, newItem: DrinkNet): Boolean {
-                return oldItem == newItem
-            }
-
-        }
-        mAdapterDrink.setList(drinkDataLocalMods, this@CategoryFragment, diffCallback)
+        mAdapterDrink.setList(drinkDataLocalMods, this@CategoryFragment)
     }
 
     private fun createAdapter(setL: List<CategoryNet>) {
@@ -140,31 +130,33 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryClickListener, List
     private fun searchView() = mBinding.run {
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(text: String?): Boolean {
+                Log.d("lol", "onQueryTextSubmit $text")
                 return false
             }
 
             override fun onQueryTextChange(text: String?): Boolean {
                 if (text != null) {
-                    if (text.isNotEmpty()) {
+                    if (text.isNotBlank()) {
+                        Log.d("lol", "onQueryTextChange text.isNotBlank() $text")
                         viewModel.search(text)
                     }
                     else {
-                        viewModel.categoryLive
+                        Log.d("lol", "onQueryTextChange else  $text")
+                        viewModel.load()
                     }
                 }
                 else {
+                    Log.d("lol", "onQueryTextChange text == null $text")
                     viewModel.categoryLive
                 }
+                Log.d("lol", "onQueryTextChange $text")
                 return false
             }
         })
     }
 
     override fun onClick(nameCat: String?) {
-        val bundle = bundleOf("nameCat" to nameCat)
-        Navigation.findNavController(this.requireView())
-            .navigate(R.id.action_tabFragment_to_cocktailListFragment, bundle)
-//        findNavController().navigate(TabFragmentDirections.actionTabFragmentToCocktailListFragment(nameCat))
+        findNavController().navigate(TabFragmentDirections.actionTabFragmentToCocktailListFragment(nameCat = nameCat))
 
         Log.d("lol", " onClick $nameCat")
     }

@@ -44,11 +44,10 @@ class CategoryViewModel @Inject constructor(
 
     init {
         load()
-
     }
 
 
-    private fun load() {
+     fun load() {
         mutIsDataLoading.value = true
         mutIsError.value = false
         viewModelScope.launch {

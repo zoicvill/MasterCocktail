@@ -26,14 +26,11 @@ class CategoryAdapter @Inject constructor() : RecyclerView.Adapter<CategoryAdapt
     }
 
     override fun onBindViewHolder(holder: VH, position: Int) {
-        Log.d("lol", "holder.bin  $position")
         holder.bind(position)
     }
 
-    override fun getItemCount() : Int{
-        Log.d("lol", "getItemCount()  ${mList.size }")
-        return mList.size
-    }
+    override fun getItemCount() = mList.size
+
 
     fun setList(dList: List<CategoryNet>, onClickSet: CategoryClickListener) {
         mList.clear()
@@ -42,10 +39,9 @@ class CategoryAdapter @Inject constructor() : RecyclerView.Adapter<CategoryAdapt
     }
 
     inner class VH(private val viewCat: ItemViewCategoryBinding) : RecyclerView.ViewHolder(viewCat.root) {
-        fun bind(position: Int) {
-            Log.d("lol", "CategoryAdapter VH ${ mList[position]}")
-            viewCat.catName.text = mList[position].strCategory
-            viewCat.root.setOnClickListener {
+        fun bind(position: Int) = viewCat.run {
+            catName.text = mList[position].strCategory
+            root.setOnClickListener {
                 onClick.onClick(mList[position].strCategory)
             }
         }

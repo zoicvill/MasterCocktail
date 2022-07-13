@@ -29,7 +29,7 @@ class FavDrinkRecyclerViewAdapter @Inject constructor() :
         valuesSet: List<DrinkData>?,
         onClickSet: FavDrinkListClickListener,
     ) {
-        val diffCallback = valuesSet?.let { FavDiffCallback(mValues, it) }
+        val diffCallback = valuesSet?.let { DiffCallbackFav(mValues, it) }
         val diffResult = diffCallback?.let { DiffUtil.calculateDiff(it) }
         mValues.clear()
         if (valuesSet != null) {

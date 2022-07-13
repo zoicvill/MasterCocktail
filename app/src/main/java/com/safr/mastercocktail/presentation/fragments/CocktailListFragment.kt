@@ -18,9 +18,7 @@ import com.google.firebase.ktx.Firebase
 import com.safr.mastercocktail.R
 import com.safr.mastercocktail.databinding.FragmentCocktailListBinding
 import com.safr.mastercocktail.domain.model.api.DrinkNet
-import com.safr.mastercocktail.presentation.adapters.DiffCallback
 import com.safr.mastercocktail.presentation.adapters.DrinkRecyclerViewAdapter
-import com.safr.mastercocktail.presentation.adapters.Listener
 import com.safr.mastercocktail.presentation.viewmodels.CocktailListViewModel
 import com.safr.mastercocktail.presentation.viewmodels.ConnectionLiveData
 import dagger.hilt.android.AndroidEntryPoint
@@ -29,7 +27,7 @@ import javax.inject.Inject
 private const val ARG_PARAM1 = "nameCat"
 
 @AndroidEntryPoint
-class CocktailListFragment : Fragment(), Listener {
+class CocktailListFragment : Fragment(), DrinkRecyclerViewAdapter.Listener {
 
     private var binding: FragmentCocktailListBinding? = null
 
@@ -80,18 +78,18 @@ class CocktailListFragment : Fragment(), Listener {
                 Log.d("lol", "CocktailListFragment viewModel.isError.observe $error")
                 findNavController().navigate(
                     CocktailListFragmentDirections.actionCocktailListFragmentToErrorFragment(
-                        "list", nameCat?: "Cocktail"
+                        "list", nameCat ?: "Cocktail"
                     )
                 )
             }
         }
-        connectionLiveData.connect.observe(viewLifecycleOwner){ error ->
+        connectionLiveData.connect.observe(viewLifecycleOwner) { error ->
 
             if (!error) {
                 Log.d("lol", " connectionLiveData")
                 findNavController().navigate(
                     CocktailListFragmentDirections.actionCocktailListFragmentToErrorFragment(
-                        "list", nameCat?: "Cocktail"
+                        "list", nameCat ?: "Cocktail"
                     )
                 )
             }
@@ -105,17 +103,7 @@ class CocktailListFragment : Fragment(), Listener {
             itemAnimator = DefaultItemAnimator()
             adapter = mAdapter
         }
-        val diffCallback = object : DiffCallback<DrinkNet>() {
-            override fun areItemsTheSame(oldItem: DrinkNet, newItem: DrinkNet): Boolean {
-                return oldItem.idDrink == newItem.idDrink
-            }
-
-            override fun areContentsTheSame(oldItem: DrinkNet, newItem: DrinkNet): Boolean {
-                return oldItem == newItem
-            }
-
-        }
-        mAdapter.setList(drinkDataLocalMods, this@CocktailListFragment, diffCallback)
+        mAdapter.setList(drinkDataLocalMods, this@CocktailListFragment)
     }
 
 

@@ -4,7 +4,7 @@ import androidx.annotation.Nullable
 import androidx.recyclerview.widget.DiffUtil
 import com.safr.mastercocktail.domain.model.data.DrinkData
 
-class FavDiffCallback(private val oldList: List<DrinkData>, private val newList: List<DrinkData>) :
+class DiffCallbackFav(private val oldList: List<DrinkData>, private val newList: List<DrinkData>) :
     DiffUtil.Callback() {
 
     override fun getOldListSize(): Int = oldList.size

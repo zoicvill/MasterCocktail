@@ -25,52 +25,15 @@ class DrinkRecyclerViewAdapter : RecyclerView.Adapter<DrinkRecyclerViewAdapter.V
     }
 
 
-    fun setList(
-        valuesSet: List<DrinkNet>, onClickSet: Listener,
-        diffCallback: DiffCallback<DrinkNet>
-    ) {
-
+    fun setList(valuesSet: List<DrinkNet>?, onClickSet: Listener) {
+        val diffCallback = valuesSet?.let { DiffCallback(mValues, it) }
+        val diffResult = diffCallback?.let { DiffUtil.calculateDiff(it) }
         mValues.clear()
-        mValues.addAll(valuesSet)
-        notifyDataSetChanged()
-        mOldValues.clear()
-        mOldValues.addAll(mValues)
-
+        if (valuesSet != null) {
+            mValues.addAll(valuesSet)
+        }
         onClick = onClickSet
-
-        val diffResult: DiffUtil.DiffResult = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
-            override fun getOldListSize(): Int {
-                return mOldValues.size
-            }
-
-            override fun getNewListSize(): Int {
-                return mValues.size
-            }
-
-            override fun getChangePayload(oldItemPosition: Int, newItemPosition: Int): Any? {
-                return diffCallback.getChangePayload(
-                    mOldValues[oldItemPosition],
-                    mValues[newItemPosition]
-                )
-            }
-
-
-            override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-                return diffCallback.areItemsTheSame(
-                    mOldValues[oldItemPosition],
-                    mValues[newItemPosition]
-                )
-            }
-
-            override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-                return diffCallback.areContentsTheSame(
-                    mOldValues[oldItemPosition],
-                    mValues[newItemPosition]
-                )
-            }
-
-        })
-        diffResult.dispatchUpdatesTo(this)
+        diffResult?.dispatchUpdatesTo(this)
 
     }
 
@@ -97,4 +60,7 @@ class DrinkRecyclerViewAdapter : RecyclerView.Adapter<DrinkRecyclerViewAdapter.V
         }
     }
 
+    interface Listener {
+        fun onClickDrinkList(drinkId: Int)
+    }
 }

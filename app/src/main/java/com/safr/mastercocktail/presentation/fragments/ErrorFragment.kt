@@ -86,7 +86,7 @@ class ErrorFragment : Fragment() {
     /*
     * защита от двойного срабатывания хоть можно сделать просто через менеджер
     * */
-    fun NavController.safeNavigate(direction: NavDirections) {
+    private fun NavController.safeNavigate(direction: NavDirections) {
         Log.d("lol", "ErrorFragment Click happened")
         currentDestination?.getAction(direction.actionId)?.run {
             Log.d("lol", "ErrorFragment Click Propagated")
