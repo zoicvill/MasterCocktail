@@ -1,10 +1,16 @@
-Простое приложение, которое помогает пользователю найти интересующий его коктейль. Работает с TheCocktailDb API.
 
-- Kotlin;
+## MasterCocktail
+![](image/logo.png)
+
+## Простое приложение, которое помогает пользователю найти интересующий его коктейль. Работает с TheCocktailDb API.
+
+## Стек:
+- Kotlin 1.7.x
+- Kotlin Coroutines
+- Kotlin Flow
 - Clean + MVVM;
-- Navigation Component;
+- Jetpack: Navigation, ViewModel, LiveData, View Binding, Room
 - Retrofit2;
-- SQLite;
 - Room;
 - Gson;
 - Glide;
@@ -12,17 +18,11 @@
 - Hilt
 - Firebase
 - Coroutines
-- Flow
 
-<div align="center">
-    <img src="image/Screenshot_20220710_234730.png" width="400px"</img> 
-</div>
-<div align="center">
-    <img src="image/Screenshot_20220710_234817.png" width="400px"</img> 
-</div>
-<div align="center">
-    <img src="image/Screenshot_20220710_234747.png" width="400px"</img> 
-</div>
-<div align="center">
-    <img src="image/Screenshot_20220710_234806.png" width="400px"</img> 
-</div>
+ <p>
+    <img style="width:400px"src="image/Screenshot_20220710_234730.png"/>
+    <img style="width:400px"src="image/Screenshot_20220710_234817.png"/>
+    <img style="width:400px"src="image/Screenshot_20220710_234747.png"/>
+    <img style="width:400px"src="image/Screenshot_20220710_234806.png"/>
+    </p>
+
