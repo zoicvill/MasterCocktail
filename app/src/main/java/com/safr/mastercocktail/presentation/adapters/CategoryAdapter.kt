@@ -1,5 +1,6 @@
 package com.safr.mastercocktail.presentation.adapters
 
+import android.annotation.SuppressLint
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -32,9 +33,11 @@ class CategoryAdapter @Inject constructor() : RecyclerView.Adapter<CategoryAdapt
     override fun getItemCount() = mList.size
 
 
+    @SuppressLint("NotifyDataSetChanged")
     fun setList(dList: List<CategoryNet>, onClickSet: CategoryClickListener) {
         mList.clear()
         mList.addAll(dList)
+        notifyDataSetChanged()
         onClick = onClickSet
     }
 

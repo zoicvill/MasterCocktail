@@ -10,13 +10,10 @@ import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
-import androidx.lifecycle.asFlow
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DefaultItemAnimator
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.safr.mastercocktail.R
 import com.safr.mastercocktail.databinding.FragmentCategoryBinding
 import com.safr.mastercocktail.domain.model.api.CategoryNet
@@ -45,12 +42,6 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryClickListener,
     @Inject
     lateinit var mAdapterDrink: DrinkRecyclerViewAdapter
 
-    override fun onStart() {
-        super.onStart()
-        Log.d("lol", "CategoryFragment onStart()")
-
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -61,6 +52,7 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryClickListener,
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        createAdapter()
         subscribeObservers()
         searchView()
         randomCocktail()
@@ -77,7 +69,7 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryClickListener,
 
     private fun subscribeObservers() {
         viewModel.categoryLive.observe(viewLifecycleOwner) {
-            createAdapter(it)
+            setList(it)
         }
 
         viewModel.isDataLoading.observe(viewLifecycleOwner) { loading ->
@@ -109,22 +101,30 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryClickListener,
     private fun setupRecyclerView(drinkDataLocalMods: List<DrinkNet>) {
         mBinding.test.apply {
             setHasFixedSize(true)
-            itemAnimator = DefaultItemAnimator()
             adapter = mAdapterDrink
+            mAdapter.stateRestorationPolicy =
+                RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
+            itemAnimator = DefaultItemAnimator()
+            setItemViewCacheSize(20)
+
         }
         mAdapterDrink.setList(drinkDataLocalMods, this@CategoryFragment)
     }
 
-    private fun createAdapter(setL: List<CategoryNet>) {
+    private fun createAdapter() {
         mBinding.test.apply {
             setHasFixedSize(true)
-            itemAnimator = DefaultItemAnimator()
             adapter = mAdapter
-
+            itemAnimator = DefaultItemAnimator()
+            mAdapter.stateRestorationPolicy =
+                RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
+            setItemViewCacheSize(20)
         }
-        mAdapter.setList(setL, this@CategoryFragment)
     }
 
+    private fun setList(setL: List<CategoryNet>) {
+        mAdapter.setList(setL, this@CategoryFragment)
+    }
 
     private fun searchView() = mBinding.run {
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -160,7 +160,11 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryClickListener,
     }
 
     override fun onClick(nameCat: String?) {
-        findNavController().navigate(TabFragmentDirections.actionTabFragmentToCocktailListFragment(nameCat = nameCat))
+        findNavController().navigate(
+            TabFragmentDirections.actionTabFragmentToCocktailListFragment(
+                nameCat = nameCat
+            )
+        )
 
         Log.d("lol", " onClick $nameCat")
     }

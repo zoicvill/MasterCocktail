@@ -12,6 +12,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
@@ -62,13 +63,14 @@ class CocktailListFragment : Fragment(), DrinkRecyclerViewAdapter.Listener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupRecyclerView()
         viewModel.catDrinkFun(nameCat)
         subscribeObservers()
     }
 
     private fun subscribeObservers() {
         viewModel.catDrinkState.observe(viewLifecycleOwner) { dataState ->
-            setupRecyclerView(dataState)
+            setList(dataState)
         }
         viewModel.isDataLoading.observe(viewLifecycleOwner) {
             mBinding.progressBarHolder.isVisible = it
@@ -97,15 +99,19 @@ class CocktailListFragment : Fragment(), DrinkRecyclerViewAdapter.Listener {
     }
 
 
-    private fun setupRecyclerView(drinkDataLocalMods: List<DrinkNet>) {
+    private fun setupRecyclerView() {
         mBinding.list.apply {
             setHasFixedSize(true)
             itemAnimator = DefaultItemAnimator()
             adapter = mAdapter
+            mAdapter.stateRestorationPolicy =
+                RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
         }
-        mAdapter.setList(drinkDataLocalMods, this@CocktailListFragment)
     }
 
+    fun setList(drinkDataLocalMods: List<DrinkNet>) {
+        mAdapter.setList(drinkDataLocalMods, this@CocktailListFragment)
+    }
 
     override fun onClickDrinkList(drinkId: Int) {
         val bundle = bundleOf("drinkId" to drinkId)
