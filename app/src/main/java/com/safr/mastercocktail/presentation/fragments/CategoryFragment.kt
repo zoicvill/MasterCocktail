@@ -15,6 +15,8 @@ import androidx.lifecycle.asFlow
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.safr.mastercocktail.R
 import com.safr.mastercocktail.databinding.FragmentCategoryBinding
 import com.safr.mastercocktail.domain.model.api.CategoryNet
@@ -118,6 +120,7 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryClickListener,
             setHasFixedSize(true)
             itemAnimator = DefaultItemAnimator()
             adapter = mAdapter
+
         }
         mAdapter.setList(setL, this@CategoryFragment)
     }

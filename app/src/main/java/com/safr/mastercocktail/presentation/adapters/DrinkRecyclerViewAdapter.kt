@@ -12,7 +12,6 @@ import com.safr.mastercocktail.domain.model.api.DrinkNet
 class DrinkRecyclerViewAdapter : RecyclerView.Adapter<DrinkRecyclerViewAdapter.ViewHolder>() {
 
     private var mValues = ArrayList<DrinkNet>()
-    private var mOldValues = ArrayList<DrinkNet>()
     private lateinit var onClick: Listener
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -51,7 +50,7 @@ class DrinkRecyclerViewAdapter : RecyclerView.Adapter<DrinkRecyclerViewAdapter.V
             drinkName.text = mValues[item].strDrink
             Glide.with(itemView.context)
                 .load(mValues[item].strDrinkThumb)
-                .placeholder(R.drawable.ic_martini_glass_citrus_solid)
+                .placeholder(R.drawable.ic_baseline_sports_bar_24)
                 .into(drinkImg)
 
             root.apply {

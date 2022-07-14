@@ -5,6 +5,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.safr.mastercocktail.R
+import com.safr.mastercocktail.databinding.ItemCocktailBinding
 import com.safr.mastercocktail.databinding.ItemListCocktailBinding
 import com.safr.mastercocktail.domain.model.data.DrinkData
 import javax.inject.Inject
@@ -17,7 +19,7 @@ class FavDrinkRecyclerViewAdapter @Inject constructor() :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
-            ItemListCocktailBinding.inflate(
+            ItemCocktailBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false
@@ -46,7 +48,7 @@ class FavDrinkRecyclerViewAdapter @Inject constructor() :
 
     override fun getItemCount(): Int = mValues.size
 
-    inner class ViewHolder(private val binding: ItemListCocktailBinding) :
+    inner class ViewHolder(private val binding: ItemCocktailBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(position: Int) = binding.run {
             itemView.setOnClickListener {
@@ -55,6 +57,7 @@ class FavDrinkRecyclerViewAdapter @Inject constructor() :
             drinkName.text = mValues[position].strDrink
             Glide.with(itemView.context)
                 .load(mValues[position].strDrinkThumb)
+                .placeholder(R.drawable.ic_baseline_sports_bar_24)
                 .into(drinkImg)
         }
     }
