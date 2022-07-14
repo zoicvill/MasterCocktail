@@ -5,18 +5,16 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.analytics.ktx.logEvent
 import com.google.firebase.ktx.Firebase
-import com.safr.mastercocktail.R
 import com.safr.mastercocktail.databinding.FragmentFavCocktailListBinding
 import com.safr.mastercocktail.domain.model.data.DrinkData
 import com.safr.mastercocktail.presentation.adapters.FavDrinkRecyclerViewAdapter
@@ -60,7 +58,7 @@ class FavCocktailListFragment : Fragment(), FavDrinkRecyclerViewAdapter.FavDrink
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) = mBinding.run {
         super.onViewCreated(view, savedInstanceState)
-
+        createAdapter()
         viewModel.run(progressBarHolder, noFavCocktailTitle)
         subscribeObservers()
     }
@@ -68,10 +66,10 @@ class FavCocktailListFragment : Fragment(), FavDrinkRecyclerViewAdapter.FavDrink
     private fun subscribeObservers() {
         viewLifecycleOwner.lifecycleScope.launchWhenResumed {
             viewModel.favourites.observe(viewLifecycleOwner) { dataState ->
-                createAdapter(dataState)
+                setList(dataState)
             }
         }
-        connectionLiveData.connect.observe(viewLifecycleOwner){ error ->
+        connectionLiveData.connect.observe(viewLifecycleOwner) { error ->
             Log.d("lol", " connectionLiveData")
             if (!error) {
                 findNavController().navigate(
@@ -83,12 +81,17 @@ class FavCocktailListFragment : Fragment(), FavDrinkRecyclerViewAdapter.FavDrink
         }
     }
 
-    private fun createAdapter(drinkDataLocalMods: List<DrinkData>?) = mBinding.run {
+    private fun createAdapter() = mBinding.run {
         mBinding.list.apply {
             setHasFixedSize(true)
             itemAnimator = DefaultItemAnimator()
             adapter = mAdapter
+            mAdapter.stateRestorationPolicy =
+                RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
         }
+    }
+
+    fun setList(drinkDataLocalMods: List<DrinkData>?){
         mAdapter.setList(drinkDataLocalMods, this@FavCocktailListFragment)
     }
 
