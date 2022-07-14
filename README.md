@@ -20,9 +20,9 @@
 - Coroutines
 
  <p>
-    <img style="width:400px"src="image/2.png"/>
-    <img style="width:400px"src="image/Screenshot_20220710_234817.png"/>
-    <img style="width:400px"src="image/Screenshot_20220710_234747.png"/>
-    <img style="width:400px"src="image/3.png"/>
+    <img style="width:400px"src="image/fase.jpg"/>
+    <img style="width:400px"src="image/list.jpg"/>
+    <img style="width:400px"src="image/detail.jpg"/>
+    <img style="width:400px"src="image/fav.jpg"/>
     </p>
 
