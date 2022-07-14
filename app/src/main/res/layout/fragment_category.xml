@@ -78,13 +78,13 @@
         android:textSize="34sp"
         android:textStyle="italic"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/test"
+        app:layout_constraintBottom_toBottomOf="@+id/category"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/buttonRandom" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/test"
+        android:id="@+id/category"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:orientation="vertical"
@@ -93,6 +93,20 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/buttonRandom"
+        tools:listitem="@layout/item_view_category" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/drinkSearch"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:visibility="gone"
+        app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonRandom"
+        app:spanCount="3"
         tools:listitem="@layout/item_view_category" />
 
     <RelativeLayout

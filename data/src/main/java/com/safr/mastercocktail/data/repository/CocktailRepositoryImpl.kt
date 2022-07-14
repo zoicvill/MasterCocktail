@@ -1,9 +1,8 @@
 package com.safr.mastercocktail.data.repository
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import com.safr.mastercocktail.core.DataState
 import com.safr.mastercocktail.data.local.datasourse.LocalDataSource
+import com.safr.mastercocktail.data.local.model.DrinkDataLocalMod
 import com.safr.mastercocktail.data.network.datasourse.ApiDataSource
 import com.safr.mastercocktail.domain.model.api.CatModelListNet
 import com.safr.mastercocktail.domain.model.api.DetailListDrinkNet
@@ -71,11 +70,11 @@ class CocktailRepositoryImpl @Inject constructor(
     }.flowOn(Dispatchers.IO)
 
     override suspend fun addToFavourites(cocktail: DrinkData) {
-        dao.insert(cocktail.to())
+        dao.insert(DrinkDataLocalMod(cocktail))
     }
 
     override suspend fun removeFromFavourites(cocktail: DrinkData) {
-        dao.remove(cocktail.to())
+        dao.remove(DrinkDataLocalMod(cocktail))
     }
 
     override suspend fun checkIfFavourite(id: Int): Flow<DataState<Boolean>> = flow {

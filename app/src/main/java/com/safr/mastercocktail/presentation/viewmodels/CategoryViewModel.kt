@@ -106,8 +106,8 @@ class CategoryViewModel @Inject constructor(
                         mutIsDataLoading.postValue(false)
 
                         if (dataState.data?.drinks != null) {
-                            mutSearchDataState.value = dataState.data.drinks
-                            Log.d("lol", "search ${dataState.data.drinks[0]}")
+                            mutSearchDataState.postValue(dataState.data?.drinks)
+                            Log.d("lol", "search ${dataState.data?.drinks?.get(0)}")
                         }
                         else {
                             Log.d("lol", "CocktailListViewModel search else")

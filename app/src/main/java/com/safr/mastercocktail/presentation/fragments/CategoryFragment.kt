@@ -6,15 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SearchView
-import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.RecyclerView
-import com.safr.mastercocktail.R
 import com.safr.mastercocktail.databinding.FragmentCategoryBinding
 import com.safr.mastercocktail.domain.model.api.CategoryNet
 import com.safr.mastercocktail.domain.model.api.DrinkNet
@@ -76,6 +73,11 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryClickListener,
             mBinding.progressBarHolder.isVisible = loading
         }
 
+        viewModel.searchDataState.observe(viewLifecycleOwner) { dataState ->
+            mBinding.noCocktailTitle.isVisible = dataState.isNullOrEmpty()
+            setupRecyclerView(dataState)
+        }
+
         viewModel.isError.observe(viewLifecycleOwner) { error ->
             if (error) {
                 Log.d("lol", " error viewModel.isError.observe")
@@ -99,20 +101,17 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryClickListener,
     }
 
     private fun setupRecyclerView(drinkDataLocalMods: List<DrinkNet>) {
-        mBinding.test.apply {
+        mBinding.drinkSearch.apply {
             setHasFixedSize(true)
             adapter = mAdapterDrink
-            mAdapter.stateRestorationPolicy =
-                RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
             itemAnimator = DefaultItemAnimator()
             setItemViewCacheSize(20)
-
         }
         mAdapterDrink.setList(drinkDataLocalMods, this@CategoryFragment)
     }
 
     private fun createAdapter() {
-        mBinding.test.apply {
+        mBinding.category.apply {
             setHasFixedSize(true)
             adapter = mAdapter
             itemAnimator = DefaultItemAnimator()
@@ -123,6 +122,8 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryClickListener,
     }
 
     private fun setList(setL: List<CategoryNet>) {
+        Log.d("lol", "setList ${setL.size}")
+
         mAdapter.setList(setL, this@CategoryFragment)
     }
 
@@ -134,25 +135,22 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryClickListener,
             }
 
             override fun onQueryTextChange(text: String?): Boolean {
-                if (text != null) {
-                    if (text.isNotBlank()) {
+                if (text != null) if (text.isNotBlank()) {
                         Log.d("lol", "onQueryTextChange text.isNotBlank() $text")
                         viewModel.search(text)
-                        viewModel.searchDataState.observe(viewLifecycleOwner) { dataState ->
-                            mBinding.noCocktailTitle.isVisible = dataState.isNullOrEmpty()
-                            setupRecyclerView(dataState)
-                        }
 
+                        category.isVisible = false
+                        drinkSearch.isVisible = true
                     }
                     else {
                         Log.d("lol", "onQueryTextChange else  $text")
-                        viewModel.load()
+                        mAdapterDrink.setList(listOf(), this@CategoryFragment)
+
+                        category.isVisible = true
+                        drinkSearch.isVisible = false
+
                     }
-                }
-                else {
-                    Log.d("lol", "onQueryTextChange text == null $text")
-                    viewModel.categoryLive
-                }
+
                 Log.d("lol", "onQueryTextChange $text")
                 return false
             }
@@ -170,9 +168,11 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryClickListener,
     }
 
     override fun onClickDrinkList(drinkId: Int) {
-        val bundle = bundleOf("drinkId" to drinkId)
-        Navigation.findNavController(this.requireView())
-            .navigate(R.id.action_tabFragment_to_cocktailDetailFragment, bundle)
+        findNavController().navigate(
+            TabFragmentDirections.actionTabFragmentToCocktailDetailFragment(
+                drinkId = drinkId
+            )
+        )
     }
 }
 

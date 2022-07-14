@@ -91,7 +91,7 @@ class FavCocktailListFragment : Fragment(), FavDrinkRecyclerViewAdapter.FavDrink
         }
     }
 
-    fun setList(drinkDataLocalMods: List<DrinkData>?){
+    private fun setList(drinkDataLocalMods: List<DrinkData>?){
         mAdapter.setList(drinkDataLocalMods, this@FavCocktailListFragment)
     }
 
