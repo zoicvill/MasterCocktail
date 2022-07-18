@@ -2,9 +2,9 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel target="1.7">
-      <module name="MasterCocktail.app" target="11" />
-      <module name="MasterCocktail.data" target="11" />
-      <module name="MasterCocktail.domain" target="11" />
+      <module name="MasterCocktail.app" target="16" />
+      <module name="MasterCocktail.data" target="16" />
+      <module name="MasterCocktail.domain" target="16" />
     </bytecodeTargetLevel>
   </component>
 </project>

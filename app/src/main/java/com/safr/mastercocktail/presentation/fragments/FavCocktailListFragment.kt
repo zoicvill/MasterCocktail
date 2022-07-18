@@ -6,36 +6,30 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.DefaultItemAnimator
-import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.analytics.ktx.logEvent
 import com.google.firebase.ktx.Firebase
+import com.mikepenz.fastadapter.FastAdapter
+import com.mikepenz.fastadapter.adapters.ItemAdapter
+import com.mikepenz.fastadapter.diff.FastAdapterDiffUtil
 import com.safr.mastercocktail.databinding.FragmentFavCocktailListBinding
 import com.safr.mastercocktail.domain.model.data.DrinkData
-import com.safr.mastercocktail.presentation.activity.MainActivity
-import com.safr.mastercocktail.presentation.adapters.FavDrinkRecyclerViewAdapter
-import com.safr.mastercocktail.presentation.viewmodels.ConnectionLiveData
+import com.safr.mastercocktail.presentation.adapters.FastFavDrinkItem
 import com.safr.mastercocktail.presentation.viewmodels.FavCocktailListViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class FavCocktailListFragment : Fragment(), FavDrinkRecyclerViewAdapter.FavDrinkListClickListener {
+class FavCocktailListFragment : Fragment() {
 
     private val viewModel: FavCocktailListViewModel by viewModels()
 
     private lateinit var analytics: FirebaseAnalytics
 
-    @Inject
-    lateinit var mAdapter: FavDrinkRecyclerViewAdapter
-    private val connectionLiveData: ConnectionLiveData by viewModels()
 
     private var binding: FragmentFavCocktailListBinding? = null
     private val mBinding get() = binding!!
@@ -60,7 +54,6 @@ class FavCocktailListFragment : Fragment(), FavDrinkRecyclerViewAdapter.FavDrink
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) = mBinding.run {
         super.onViewCreated(view, savedInstanceState)
-        createAdapter()
         viewModel.run(progressBarHolder, noFavCocktailTitle)
         subscribeObservers()
     }
@@ -68,28 +61,26 @@ class FavCocktailListFragment : Fragment(), FavDrinkRecyclerViewAdapter.FavDrink
     private fun subscribeObservers() {
         viewLifecycleOwner.lifecycleScope.launchWhenResumed {
             viewModel.favourites.observe(viewLifecycleOwner) { dataState ->
-                setList(dataState)
+                dataState?.let { setList(it) }
             }
         }
     }
 
-    private fun createAdapter() = mBinding.run {
-        mBinding.list.apply {
-            setHasFixedSize(true)
-            itemAnimator = DefaultItemAnimator()
-            adapter = mAdapter
-        }
-    }
-
-    private fun setList(drinkDataLocalMods: List<DrinkData>?){
-        mAdapter.setList(drinkDataLocalMods, this@FavCocktailListFragment)
-    }
-
-    override fun onClickDrinkList(drinkId: Int?) {
-        this@FavCocktailListFragment.findNavController().navigate(
-            TabFragmentDirections.actionTabFragmentToCocktailDetailFragment(
-                drinkId = drinkId ?: 15346
+    private fun setList(drinkDataLocalMods: List<DrinkData>) {
+        val itemAdapter = ItemAdapter<FastFavDrinkItem>()
+        val fastAdapter = FastAdapter.with(itemAdapter)
+        fastAdapter.onClickListener = { _, _, item, _ ->
+            findNavController().navigate(
+                TabFragmentDirections.actionTabFragmentToCocktailDetailFragment(
+                    drinkId = item.drink.idDrink ?: 15346
+                )
             )
-        )
+            Log.d("lol", " onClick weatherFastAdapter ${item.drink.idDrink}")
+            false
+        }
+        mBinding.favCocktailList.adapter = fastAdapter
+        FastAdapterDiffUtil[itemAdapter] =
+            drinkDataLocalMods.map(::FastFavDrinkItem)
     }
+
 }

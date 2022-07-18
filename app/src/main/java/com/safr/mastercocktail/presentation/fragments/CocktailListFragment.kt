@@ -14,16 +14,19 @@ import androidx.recyclerview.widget.DefaultItemAnimator
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
+import com.mikepenz.fastadapter.FastAdapter
+import com.mikepenz.fastadapter.adapters.ItemAdapter
+import com.mikepenz.fastadapter.diff.FastAdapterDiffUtil
 import com.safr.mastercocktail.databinding.FragmentCocktailListBinding
 import com.safr.mastercocktail.domain.model.api.DrinkNet
-import com.safr.mastercocktail.presentation.adapters.DrinkRecyclerViewAdapter
+import com.safr.mastercocktail.presentation.adapters.FastDrinkItem
 import com.safr.mastercocktail.presentation.viewmodels.CocktailListViewModel
 import com.safr.mastercocktail.presentation.viewmodels.ConnectionLiveData
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class CocktailListFragment : Fragment(), DrinkRecyclerViewAdapter.Listener {
+class CocktailListFragment : Fragment() {
 
     private var binding: FragmentCocktailListBinding? = null
 
@@ -34,10 +37,10 @@ class CocktailListFragment : Fragment(), DrinkRecyclerViewAdapter.Listener {
     private val viewModel: CocktailListViewModel by viewModels()
     private val connectionLiveData: ConnectionLiveData by viewModels()
 
-    private lateinit var analytics: FirebaseAnalytics
+    private val itemAdapter = ItemAdapter<FastDrinkItem>()
+    private val fastAdapter = FastAdapter.with(itemAdapter)
 
-    @Inject
-    lateinit var mAdapter: DrinkRecyclerViewAdapter
+    private lateinit var analytics: FirebaseAnalytics
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,7 +58,6 @@ class CocktailListFragment : Fragment(), DrinkRecyclerViewAdapter.Listener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupRecyclerView()
         viewModel.catDrinkFun(nameCat)
         subscribeObservers()
     }
@@ -75,39 +77,35 @@ class CocktailListFragment : Fragment(), DrinkRecyclerViewAdapter.Listener {
             viewModel.isError.collect { error ->
                 mBinding.apply {
                     errorServer.isVisible = error
-                    list.isVisible = !error
+                    cocktailList.isVisible = !error
                 }
             }
         }
         connectionLiveData.connect.observe(viewLifecycleOwner) { error ->
-                Log.d("lol", " connectionLiveData")
+            Log.d("lol", " connectionLiveData")
             mBinding.errorView.root.isVisible = !error
-            mBinding.list.isVisible = error
+            mBinding.cocktailList.isVisible = error
 
         }
 
     }
 
-
-    private fun setupRecyclerView() {
-        mBinding.list.apply {
-            setHasFixedSize(true)
-            itemAnimator = DefaultItemAnimator()
-            adapter = mAdapter
-        }
-    }
 
     private fun setList(drinkDataLocalMods: List<DrinkNet>) {
-        mAdapter.setList(drinkDataLocalMods, this@CocktailListFragment)
-    }
-
-    override fun onClickDrinkList(drinkId: Int) {
-        this@CocktailListFragment.findNavController()
-            .navigate(
+        fastAdapter.onClickListener = { _, _, item, _ ->
+            findNavController().navigate(
                 CocktailListFragmentDirections.actionCocktailListFragmentToCocktailDetailFragment(
-                    drinkId = drinkId
+                    drinkId = item.drink.idDrink
                 )
             )
-    }
+            Log.d("lol", " onClick weatherFastAdapter ${item.drink.idDrink}")
+            false
+        }
+        mBinding.cocktailList.adapter = fastAdapter
 
+        FastAdapterDiffUtil[itemAdapter] = FastAdapterDiffUtil.calculateDiff(
+            itemAdapter,
+            drinkDataLocalMods.map(::FastDrinkItem)
+        )
+    }
 }

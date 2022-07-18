@@ -11,33 +11,24 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.DefaultItemAnimator
+import com.mikepenz.fastadapter.FastAdapter
+import com.mikepenz.fastadapter.adapters.ItemAdapter
+import com.mikepenz.fastadapter.diff.FastAdapterDiffUtil
 import com.safr.mastercocktail.databinding.FragmentCategoryBinding
 import com.safr.mastercocktail.domain.model.api.CategoryNet
 import com.safr.mastercocktail.domain.model.api.DrinkNet
-import com.safr.mastercocktail.presentation.adapters.CategoryAdapter
-import com.safr.mastercocktail.presentation.adapters.DrinkRecyclerViewAdapter
+import com.safr.mastercocktail.presentation.adapters.FastCategoryItem
+import com.safr.mastercocktail.presentation.adapters.FastDrinkItem
 import com.safr.mastercocktail.presentation.viewmodels.CategoryViewModel
-import com.safr.mastercocktail.presentation.viewmodels.ConnectionLiveData
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
-class CategoryFragment : Fragment(), CategoryAdapter.CategoryClickListener,
-    DrinkRecyclerViewAdapter.Listener {
+class CategoryFragment : Fragment() {
 
     private var binding: FragmentCategoryBinding? = null
     private val mBinding get() = binding!!
 
     private val viewModel: CategoryViewModel by viewModels()
-
-    private val connectionLiveData: ConnectionLiveData by viewModels()
-
-    @Inject
-    lateinit var mAdapter: CategoryAdapter
-
-    @Inject
-    lateinit var mAdapterDrink: DrinkRecyclerViewAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -49,7 +40,6 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryClickListener,
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        createAdapter()
         subscribeObservers()
         searchView()
         randomCocktail()
@@ -60,7 +50,11 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryClickListener,
         mBinding.buttonRandom.setOnClickListener {
             viewLifecycleOwner.lifecycleScope.launchWhenStarted {
                 viewModel.getRandomState.collect {
-                    it?.last()?.idDrink?.let { it1 -> onClickDrinkList(it1) }
+                    findNavController().navigate(
+                        TabFragmentDirections.actionTabFragmentToCocktailDetailFragment(
+                            drinkId = it!![0].idDrink
+                        )
+                    )
                 }
             }
 
@@ -106,28 +100,46 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryClickListener,
     }
 
     private fun setupRecyclerView(drinkDataLocalMods: List<DrinkNet>) {
-        mBinding.drinkSearch.apply {
-            setHasFixedSize(true)
-            adapter = mAdapterDrink
-            itemAnimator = DefaultItemAnimator()
-            setItemViewCacheSize(20)
+        val itemAdapter = ItemAdapter<FastDrinkItem>()
+        val fastAdapter =
+            FastAdapter.with(itemAdapter)
+        fastAdapter.onClickListener = { _, _, item, _ ->
+
+            findNavController().navigate(
+                TabFragmentDirections.actionTabFragmentToCocktailDetailFragment(
+                    drinkId = item.drink.idDrink
+                )
+            )
+            Log.d("lol", " onClick weatherFastAdapter ${item.drink.idDrink}")
+            false
         }
-        mAdapterDrink.setList(drinkDataLocalMods, this@CategoryFragment)
+        mBinding.drinkSearch.adapter = fastAdapter
+        FastAdapterDiffUtil[itemAdapter] =
+            drinkDataLocalMods.map(::FastDrinkItem)
     }
 
-    private fun createAdapter() {
-        mBinding.category.apply {
-            setHasFixedSize(true)
-            adapter = mAdapter
-            itemAnimator = DefaultItemAnimator()
-            setItemViewCacheSize(20)
-        }
-    }
 
     private fun setList(setL: List<CategoryNet>) {
         Log.d("lol", "setList ${setL.size}")
-        mAdapter.setList(setL, this@CategoryFragment)
+        val itemAdapter = ItemAdapter<FastCategoryItem>()
+        val fastAdapter =
+            FastAdapter.with(itemAdapter)
+
+        fastAdapter.onClickListener = { _, _, item, _ ->
+            findNavController().navigate(
+                TabFragmentDirections.actionTabFragmentToCocktailListFragment(
+                    nameCat = item.category.strCategory
+                )
+            )
+            Log.d("lol", " onClick weatherFastAdapter ${item.category.strCategory}")
+            false
+        }
+
+        mBinding.category.adapter = fastAdapter
+        FastAdapterDiffUtil[itemAdapter] =
+            setL.map(::FastCategoryItem)
     }
+
 
     private fun searchView() = mBinding.run {
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -142,8 +154,7 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryClickListener,
                     viewModel.search(text)
                     category.isVisible = false
                     drinkSearch.isVisible = true
-                }
-                else {
+                } else {
                     Log.d("lol", "onQueryTextChange else  $text")
                     category.isVisible = true
                     drinkSearch.isVisible = false
@@ -153,24 +164,6 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryClickListener,
                 return false
             }
         })
-    }
-
-    override fun onClick(nameCat: String?) {
-        findNavController().navigate(
-            TabFragmentDirections.actionTabFragmentToCocktailListFragment(
-                nameCat = nameCat
-            )
-        )
-
-        Log.d("lol", " onClick $nameCat")
-    }
-
-    override fun onClickDrinkList(drinkId: Int) {
-        findNavController().navigate(
-            TabFragmentDirections.actionTabFragmentToCocktailDetailFragment(
-                drinkId = drinkId
-            )
-        )
     }
 }
 

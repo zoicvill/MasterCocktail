@@ -11,8 +11,9 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.google.android.material.tabs.TabLayoutMediator
-import com.safr.mastercocktail.databinding.FragmentTabBinding
 import com.safr.mastercocktail.presentation.adapters.ViewPagerAdapter
+import com.safr.mastercocktail.databinding.FragmentTabBinding
+
 import com.safr.mastercocktail.presentation.viewmodels.ConnectionLiveData
 import dagger.hilt.android.AndroidEntryPoint
 

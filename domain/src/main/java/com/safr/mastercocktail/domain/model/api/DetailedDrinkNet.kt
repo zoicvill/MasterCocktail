@@ -8,6 +8,6 @@ data class DetailedDrinkNet(
     val strGlass: String? = "",
     val strInstructions: String? = "",
     val strDrinkThumb: String? = "",
-    val listIngredients: List<String?> = listOf(),
+    val listIngredients: List<String> = listOf(),
     val strImageSource: String? = "",
 )

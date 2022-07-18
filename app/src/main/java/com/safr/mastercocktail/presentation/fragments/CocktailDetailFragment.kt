@@ -11,20 +11,20 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.DefaultItemAnimator
 import com.bumptech.glide.Glide
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
+import com.mikepenz.fastadapter.FastAdapter
+import com.mikepenz.fastadapter.adapters.ItemAdapter
+import com.mikepenz.fastadapter.diff.FastAdapterDiffUtil
 import com.safr.mastercocktail.R
 import com.safr.mastercocktail.databinding.FragmentCocktailDetailBinding
 import com.safr.mastercocktail.domain.model.api.DetailedDrinkNet
-import com.safr.mastercocktail.presentation.adapters.CocktailDetailAdapter
+import com.safr.mastercocktail.presentation.adapters.FastCocktaiItem
 import com.safr.mastercocktail.presentation.viewmodels.CocktailDetailViewModel
 import com.safr.mastercocktail.presentation.viewmodels.ConnectionLiveData
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class CocktailDetailFragment : Fragment() {
@@ -39,10 +39,6 @@ class CocktailDetailFragment : Fragment() {
 
     private val viewModel: CocktailDetailViewModel by viewModels()
     private val connectionLiveData: ConnectionLiveData by viewModels()
-
-    @Inject
-    lateinit var mAdapter: CocktailDetailAdapter
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -78,8 +74,7 @@ class CocktailDetailFragment : Fragment() {
             if (isFavourite) {
                 viewModel.removeCocktailFromFavourite()
                 Toast.makeText(context, "Removed from Favourites!", Toast.LENGTH_SHORT).show()
-            }
-            else {
+            } else {
                 viewModel.addCocktailToFavourite()
                 Toast.makeText(context, "Added to Favourites!", Toast.LENGTH_SHORT).show()
             }
@@ -94,8 +89,7 @@ class CocktailDetailFragment : Fragment() {
                     R.drawable.ic_star_24
                 )
             )
-        }
-        else {
+        } else {
             setImageDrawable(
                 AppCompatResources.getDrawable(
                     requireContext(),
@@ -128,9 +122,9 @@ class CocktailDetailFragment : Fragment() {
             }
         }
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            viewModel.isError.collect { error ->
-
-
+            viewModel.isError.collect { errorCollect ->
+                mBinding.error.isVisible = errorCollect
+                mBinding.allView.isVisible = !errorCollect
             }
         }
 
@@ -143,15 +137,14 @@ class CocktailDetailFragment : Fragment() {
     }
 
 
-    private fun createAdapter(drinkDataLocalMods: List<String?>) = mBinding.run {
-        Log.d("lol", "createAdapter ${drinkDataLocalMods.size}")
+    private fun createAdapter(drinkDataLocalMods: List<String>) = mBinding.run {
+        val itemAdapter = ItemAdapter<FastCocktaiItem>()
+        val fastAdapter =
+            FastAdapter.with(itemAdapter)
+        mBinding.listIngr.adapter = fastAdapter
+        FastAdapterDiffUtil[itemAdapter] =
+            drinkDataLocalMods.map(::FastCocktaiItem)
 
-        mBinding.list.apply {
-            setHasFixedSize(true)
-            itemAnimator = DefaultItemAnimator()
-            adapter = mAdapter
-        }
-        mAdapter.setList(drinkDataLocalMods)
     }
 
     private fun displayData(cocktail: DetailedDrinkNet) = mBinding.run {

@@ -7,7 +7,7 @@
     android:layout_height="match_parent">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/list"
+        android:id="@+id/cocktailList"
         android:name="hu.hasza.cocktailapp.ui.list.CocktailListFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -30,7 +30,7 @@
         android:alpha="0.5"
         android:background="@color/white"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/list"
+        app:layout_constraintBottom_toBottomOf="@+id/cocktailList"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -59,7 +59,7 @@
         android:textSize="34sp"
         android:textStyle="italic"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/list"
+        app:layout_constraintBottom_toBottomOf="@+id/listIngr"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
