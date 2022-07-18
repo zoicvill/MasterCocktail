@@ -4,6 +4,7 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/MasterCocktail/app/src/main/res/drawable/ic_baseline_edit_24.xml" value="0.1695" />
+        <entry key="..\:/MasterCocktail/app/src/main/res/drawable/ic_baseline_sports_bar_24.xml" value="0.1055" />
         <entry key="..\:/MasterCocktail/app/src/main/res/drawable/ic_dashboard_black_24dp.xml" value="0.1695" />
         <entry key="..\:/MasterCocktail/app/src/main/res/drawable/ic_home_black_24dp.xml" value="0.1695" />
         <entry key="..\:/MasterCocktail/app/src/main/res/drawable/ic_launcher_background.xml" value="0.1695" />
@@ -11,6 +12,7 @@
         <entry key="..\:/MasterCocktail/app/src/main/res/drawable/ic_notifications_black_24dp.xml" value="0.1695" />
         <entry key="..\:/MasterCocktail/app/src/main/res/drawable/ic_star_24.xml" value="0.1695" />
         <entry key="..\:/MasterCocktail/app/src/main/res/drawable/ic_star_outline_24.xml" value="0.1695" />
+        <entry key="..\:/MasterCocktail/app/src/main/res/drawable/launch_screen.xml" value="0.1085" />
         <entry key="..\:/MasterCocktail/app/src/main/res/drawable/my_gradient_grand.xml" value="0.1695" />
         <entry key="..\:/MasterCocktail/app/src/main/res/layout/activity_bottom.xml" value="0.25416666666666665" />
         <entry key="..\:/MasterCocktail/app/src/main/res/layout/activity_main.xml" value="0.25416666666666665" />
@@ -20,7 +22,7 @@
         <entry key="..\:/MasterCocktail/app/src/main/res/layout/container_item_category.xml" value="0.253125" />
         <entry key="..\:/MasterCocktail/app/src/main/res/layout/fr_cocktail_list.xml" value="0.264" />
         <entry key="..\:/MasterCocktail/app/src/main/res/layout/fragment_category.xml" value="0.2" />
-        <entry key="..\:/MasterCocktail/app/src/main/res/layout/fragment_cocktail_detail.xml" value="0.25" />
+        <entry key="..\:/MasterCocktail/app/src/main/res/layout/fragment_cocktail_detail.xml" value="0.264" />
         <entry key="..\:/MasterCocktail/app/src/main/res/layout/fragment_cocktail_list.xml" value="0.264" />
         <entry key="..\:/MasterCocktail/app/src/main/res/layout/fragment_error.xml" value="0.25416666666666665" />
         <entry key="..\:/MasterCocktail/app/src/main/res/layout/fragment_fav_cocktail_list.xml" value="0.24010416666666667" />
