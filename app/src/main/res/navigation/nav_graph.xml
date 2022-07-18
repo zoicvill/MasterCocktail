@@ -18,9 +18,6 @@
             app:destination="@id/cocktailDetailFragment"
             app:launchSingleTop="false"
             app:popUpToInclusive="false" />
-        <action
-            android:id="@+id/action_tabFragment_to_errorFragment"
-            app:destination="@id/errorFragment" />
         <argument
             android:name="param"
             app:argType="string"
@@ -34,11 +31,6 @@
         <action
             android:id="@+id/action_cocktailDetailFragment_to_cocktailListFragment"
             app:destination="@id/cocktailListFragment" />
-        <action
-            android:id="@+id/action_cocktailDetailFragment_to_errorFragment"
-            app:destination="@id/errorFragment"
-            app:launchSingleTop="false"
-            app:popUpToInclusive="false" />
         <action
             android:id="@+id/action_cocktailDetailFragment_to_tabFragment"
             app:destination="@id/tabFragment"
@@ -60,49 +52,9 @@
         <action
             android:id="@+id/action_cocktailListFragment_to_tabFragment"
             app:destination="@id/tabFragment" />
-        <action
-            android:id="@+id/action_cocktailListFragment_to_errorFragment"
-            app:destination="@id/errorFragment"
-            app:popUpToInclusive="false" />
         <argument
             android:name="nameCat"
             app:argType="string"
             app:nullable="true" />
-    </fragment>
-    <fragment
-        android:id="@+id/errorFragment"
-        android:name="com.safr.mastercocktail.presentation.fragments.ErrorFragment"
-        android:label="fragment_error"
-        tools:layout="@layout/fragment_error" >
-        <action
-            android:id="@+id/action_errorFragment_to_tabFragment"
-            app:destination="@id/tabFragment"
-            app:launchSingleTop="false"
-            app:popUpTo="@id/tabFragment"
-            app:popUpToInclusive="true" />
-        <action
-            android:id="@+id/action_errorFragment_to_cocktailListFragment"
-            app:destination="@id/cocktailListFragment"
-            app:launchSingleTop="false"
-            app:popUpTo="@id/tabFragment"
-            app:popUpToInclusive="false" />
-        <action
-            android:id="@+id/action_errorFragment_to_cocktailDetailFragment"
-            app:destination="@id/cocktailDetailFragment"
-            app:launchSingleTop="false"
-            app:popUpTo="@id/tabFragment"
-            app:popUpToInclusive="false" />
-        <argument
-            android:name="param"
-            app:argType="string"
-            android:defaultValue="category" />
-        <argument
-            android:name="nameCat"
-            app:argType="string"
-            android:defaultValue="Cocktail" />
-        <argument
-            android:name="drinkId"
-            app:argType="integer"
-            android:defaultValue="15346" />
     </fragment>
 </navigation>

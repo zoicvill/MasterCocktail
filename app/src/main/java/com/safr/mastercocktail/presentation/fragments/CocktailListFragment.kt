@@ -5,18 +5,15 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.Navigation
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DefaultItemAnimator
-import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
-import com.safr.mastercocktail.R
 import com.safr.mastercocktail.databinding.FragmentCocktailListBinding
 import com.safr.mastercocktail.domain.model.api.DrinkNet
 import com.safr.mastercocktail.presentation.adapters.DrinkRecyclerViewAdapter
@@ -24,8 +21,6 @@ import com.safr.mastercocktail.presentation.viewmodels.CocktailListViewModel
 import com.safr.mastercocktail.presentation.viewmodels.ConnectionLiveData
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
-
-private const val ARG_PARAM1 = "nameCat"
 
 @AndroidEntryPoint
 class CocktailListFragment : Fragment(), DrinkRecyclerViewAdapter.Listener {
@@ -46,9 +41,6 @@ class CocktailListFragment : Fragment(), DrinkRecyclerViewAdapter.Listener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        arguments?.let {
-//            nameCat = it.getString(ARG_PARAM1)
-//        }
         nameCat = arguments?.let { CocktailListFragmentArgs.fromBundle(it).nameCat }
         analytics = Firebase.analytics
     }
@@ -69,33 +61,31 @@ class CocktailListFragment : Fragment(), DrinkRecyclerViewAdapter.Listener {
     }
 
     private fun subscribeObservers() {
-        viewModel.catDrinkState.observe(viewLifecycleOwner) { dataState ->
-            setList(dataState)
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            viewModel.catDrinkState.collect { dataState ->
+                dataState?.let { setList(it) }
+            }
         }
-        viewModel.isDataLoading.observe(viewLifecycleOwner) {
-            mBinding.progressBarHolder.isVisible = it
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            viewModel.isDataLoading.collect {
+                mBinding.progressBarHolder.isVisible = it
+            }
         }
-        viewModel.isError.observe(viewLifecycleOwner) { error ->
-            if (error) {
-                Log.d("lol", "CocktailListFragment viewModel.isError.observe $error")
-                findNavController().navigate(
-                    CocktailListFragmentDirections.actionCocktailListFragmentToErrorFragment(
-                        "list", nameCat ?: "Cocktail"
-                    )
-                )
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            viewModel.isError.collect { error ->
+                mBinding.apply {
+                    errorServer.isVisible = error
+                    list.isVisible = !error
+                }
             }
         }
         connectionLiveData.connect.observe(viewLifecycleOwner) { error ->
-
-            if (!error) {
                 Log.d("lol", " connectionLiveData")
-                findNavController().navigate(
-                    CocktailListFragmentDirections.actionCocktailListFragmentToErrorFragment(
-                        "list", nameCat ?: "Cocktail"
-                    )
-                )
-            }
+            mBinding.errorView.root.isVisible = !error
+            mBinding.list.isVisible = error
+
         }
+
     }
 
 
@@ -104,19 +94,20 @@ class CocktailListFragment : Fragment(), DrinkRecyclerViewAdapter.Listener {
             setHasFixedSize(true)
             itemAnimator = DefaultItemAnimator()
             adapter = mAdapter
-            mAdapter.stateRestorationPolicy =
-                RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
         }
     }
 
-    fun setList(drinkDataLocalMods: List<DrinkNet>) {
+    private fun setList(drinkDataLocalMods: List<DrinkNet>) {
         mAdapter.setList(drinkDataLocalMods, this@CocktailListFragment)
     }
 
     override fun onClickDrinkList(drinkId: Int) {
-        val bundle = bundleOf("drinkId" to drinkId)
-        Navigation.findNavController(this.requireView())
-            .navigate(R.id.action_cocktailListFragment_to_cocktailDetailFragment, bundle)
+        this@CocktailListFragment.findNavController()
+            .navigate(
+                CocktailListFragmentDirections.actionCocktailListFragmentToCocktailDetailFragment(
+                    drinkId = drinkId
+                )
+            )
     }
 
 }

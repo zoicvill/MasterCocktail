@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -17,6 +18,7 @@ import com.google.firebase.analytics.ktx.logEvent
 import com.google.firebase.ktx.Firebase
 import com.safr.mastercocktail.databinding.FragmentFavCocktailListBinding
 import com.safr.mastercocktail.domain.model.data.DrinkData
+import com.safr.mastercocktail.presentation.activity.MainActivity
 import com.safr.mastercocktail.presentation.adapters.FavDrinkRecyclerViewAdapter
 import com.safr.mastercocktail.presentation.viewmodels.ConnectionLiveData
 import com.safr.mastercocktail.presentation.viewmodels.FavCocktailListViewModel
@@ -69,16 +71,6 @@ class FavCocktailListFragment : Fragment(), FavDrinkRecyclerViewAdapter.FavDrink
                 setList(dataState)
             }
         }
-        connectionLiveData.connect.observe(viewLifecycleOwner) { error ->
-            Log.d("lol", " connectionLiveData")
-            if (!error) {
-                findNavController().navigate(
-                    TabFragmentDirections.actionTabFragmentToErrorFragment(
-                        "category"
-                    )
-                )
-            }
-        }
     }
 
     private fun createAdapter() = mBinding.run {
@@ -86,8 +78,6 @@ class FavCocktailListFragment : Fragment(), FavDrinkRecyclerViewAdapter.FavDrink
             setHasFixedSize(true)
             itemAnimator = DefaultItemAnimator()
             adapter = mAdapter
-            mAdapter.stateRestorationPolicy =
-                RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
         }
     }
 
@@ -96,7 +86,7 @@ class FavCocktailListFragment : Fragment(), FavDrinkRecyclerViewAdapter.FavDrink
     }
 
     override fun onClickDrinkList(drinkId: Int?) {
-        findNavController().navigate(
+        this@FavCocktailListFragment.findNavController().navigate(
             TabFragmentDirections.actionTabFragmentToCocktailDetailFragment(
                 drinkId = drinkId ?: 15346
             )

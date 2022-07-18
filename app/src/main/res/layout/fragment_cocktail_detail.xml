@@ -1,18 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent">
 
     <ScrollView
         android:id="@+id/allView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/progressBarHolder">
 
-        <RelativeLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:padding="20dp">
 
             <androidx.cardview.widget.CardView
@@ -20,24 +24,33 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                app:cardCornerRadius="10dp">
+                app:cardCornerRadius="10dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
                 <ImageView
                     android:id="@+id/cocktailImage"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:adjustViewBounds="true"
+                    android:contentDescription="TODO"
                     android:cropToPadding="true" />
             </androidx.cardview.widget.CardView>
 
             <LinearLayout
                 android:id="@+id/title_holder"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/cocktail_Image_Holder"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="20dp"
-                android:weightSum="10">
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="20dp"
+                android:weightSum="10"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/cocktail_Image_Holder">
 
                 <TextView
                     android:id="@+id/cocktail_name"
@@ -47,6 +60,7 @@
                     android:fontFamily="sans-serif-condensed-medium"
                     android:gravity="center"
                     android:text="Cocktail Name"
+                    android:textColor="#A1887F"
                     android:textSize="30sp"
                     android:textStyle="bold" />
 
@@ -55,6 +69,7 @@
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:layout_weight="2"
+                    android:contentDescription="TODO"
                     android:src="@drawable/ic_star_outline_24" />
             </LinearLayout>
 
@@ -68,8 +83,11 @@
                 android:fontFamily="sans-serif-condensed-medium"
                 android:gravity="start"
                 android:text="Ingridients"
+                android:textColor="#A1887F"
                 android:textSize="25sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="@+id/cocktail_instructions"
+                app:layout_constraintTop_toBottomOf="@+id/cocktail_instructions" />
 
             <TextView
                 android:id="@+id/cocktail_instructions_title"
@@ -80,45 +98,91 @@
                 android:fontFamily="sans-serif-condensed-medium"
                 android:text="Cocktail Instructions"
                 android:textAlignment="textStart"
+                android:textColor="#A1887F"
                 android:textSize="25sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/title_holder" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/list"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/cocktail_ingridients_title"
-                android:layout_marginTop="8dp"
+                android:layout_height="0dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="8dp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:listitem="@layout/item_ingredients" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/cocktail_ingridients_title"
+                app:layout_constraintTop_toBottomOf="@+id/cocktail_ingridients_title" />
 
             <TextView
                 android:id="@+id/cocktail_instructions"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/cocktail_instructions_title"
-                android:layout_marginStart="5dp"
                 android:layout_marginTop="8dp"
-                android:layout_marginBottom="20dp"
                 android:fontFamily="sans-serif-condensed-medium"
                 android:text="Instructions"
                 android:textAlignment="textStart"
-                android:textSize="20sp" />
-        </RelativeLayout>
+                android:textColor="#A1887F"
+                android:textSize="20sp"
+                app:layout_constraintStart_toStartOf="@+id/cocktail_instructions_title"
+                app:layout_constraintTop_toBottomOf="@+id/cocktail_instructions_title" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 
-    <RelativeLayout
+    <TextView
+        android:id="@+id/error"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="147dp"
+        android:text="Ошибка сервера"
+        android:textColor="#FF1100"
+        android:textSize="34sp"
+        android:textStyle="italic"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/progressBarHolder" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/progressBarHolder"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:alpha="0.5"
-        android:background="@color/white">
+        android:background="@color/white"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/error"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.progressindicator.CircularProgressIndicator
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:id="@+id/circularProgressIndicator"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:layout_centerInParent="true"
-            android:indeterminate="true" />
-    </RelativeLayout>
-</RelativeLayout>
+            android:indeterminate="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <include
+        android:id="@+id/errorView"
+        layout="@layout/item_error"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>
 

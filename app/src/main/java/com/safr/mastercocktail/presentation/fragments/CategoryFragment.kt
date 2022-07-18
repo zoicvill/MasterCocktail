@@ -9,9 +9,9 @@ import android.widget.SearchView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DefaultItemAnimator
-import androidx.recyclerview.widget.RecyclerView
 import com.safr.mastercocktail.databinding.FragmentCategoryBinding
 import com.safr.mastercocktail.domain.model.api.CategoryNet
 import com.safr.mastercocktail.domain.model.api.DrinkNet
@@ -56,48 +56,53 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryClickListener,
     }
 
     private fun randomCocktail() {
+        viewModel.rand()
         mBinding.buttonRandom.setOnClickListener {
-            viewModel.rand()
-            viewModel.getRandomState.observe(viewLifecycleOwner) {
-                onClickDrinkList(it[0].idDrink)
+            viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+                viewModel.getRandomState.collect {
+                    it?.last()?.idDrink?.let { it1 -> onClickDrinkList(it1) }
+                }
             }
+
         }
     }
 
     private fun subscribeObservers() {
-        viewModel.categoryLive.observe(viewLifecycleOwner) {
-            setList(it)
-        }
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            viewModel.categoryLive.collect {
+                it?.let { it1 -> setList(it1) }
+            }
 
-        viewModel.isDataLoading.observe(viewLifecycleOwner) { loading ->
-            mBinding.progressBarHolder.isVisible = loading
         }
-
-        viewModel.searchDataState.observe(viewLifecycleOwner) { dataState ->
-            mBinding.noCocktailTitle.isVisible = dataState.isNullOrEmpty()
-            setupRecyclerView(dataState)
-        }
-
-        viewModel.isError.observe(viewLifecycleOwner) { error ->
-            if (error) {
-                Log.d("lol", " error viewModel.isError.observe")
-                findNavController().navigate(
-                    TabFragmentDirections.actionTabFragmentToErrorFragment(
-                        "category"
-                    )
-                )
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            viewModel.isDataLoading.collect { loading ->
+                mBinding.progressBarHolder.isVisible = loading
             }
         }
-        connectionLiveData.connect.observe(viewLifecycleOwner) { error ->
-            if (!error) {
-                Log.d("lol", "if  connectionLiveData")
-                findNavController().navigate(
-                    TabFragmentDirections.actionTabFragmentToErrorFragment(
-                        "category"
-                    )
-                )
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            viewModel.isDataLoading.collect { loading ->
+                mBinding.progressBarHolder.isVisible = loading
             }
         }
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            viewModel.searchDataState.collect { dataState ->
+                Log.d(
+                    "lol", " viewModel." +
+                            "searchDataState dataState $dataState if ${dataState.isNullOrEmpty()}"
+                )
+
+                mBinding.noCocktailTitle.isVisible = dataState.isNullOrEmpty()
+                dataState?.let { setupRecyclerView(it) }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            viewModel.isError.collect { error ->
+                mBinding.errorServer.isVisible = error
+                mBinding.category.isVisible = !error
+            }
+        }
+
     }
 
     private fun setupRecyclerView(drinkDataLocalMods: List<DrinkNet>) {
@@ -115,15 +120,12 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryClickListener,
             setHasFixedSize(true)
             adapter = mAdapter
             itemAnimator = DefaultItemAnimator()
-            mAdapter.stateRestorationPolicy =
-                RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
             setItemViewCacheSize(20)
         }
     }
 
     private fun setList(setL: List<CategoryNet>) {
         Log.d("lol", "setList ${setL.size}")
-
         mAdapter.setList(setL, this@CategoryFragment)
     }
 
@@ -136,21 +138,17 @@ class CategoryFragment : Fragment(), CategoryAdapter.CategoryClickListener,
 
             override fun onQueryTextChange(text: String?): Boolean {
                 if (text != null) if (text.isNotBlank()) {
-                        Log.d("lol", "onQueryTextChange text.isNotBlank() $text")
-                        viewModel.search(text)
+                    Log.d("lol", "onQueryTextChange text.isNotBlank() $text")
+                    viewModel.search(text)
+                    category.isVisible = false
+                    drinkSearch.isVisible = true
+                }
+                else {
+                    Log.d("lol", "onQueryTextChange else  $text")
+                    category.isVisible = true
+                    drinkSearch.isVisible = false
 
-                        category.isVisible = false
-                        drinkSearch.isVisible = true
-                    }
-                    else {
-                        Log.d("lol", "onQueryTextChange else  $text")
-                        mAdapterDrink.setList(listOf(), this@CategoryFragment)
-
-                        category.isVisible = true
-                        drinkSearch.isVisible = false
-
-                    }
-
+                }
                 Log.d("lol", "onQueryTextChange $text")
                 return false
             }

@@ -1,16 +1,14 @@
 package com.safr.mastercocktail.presentation.viewmodels
 
 import android.app.Application
-import android.widget.RelativeLayout
-import androidx.core.view.isVisible
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.safr.mastercocktail.core.DataState
 import com.safr.mastercocktail.domain.model.api.DrinkNet
 import com.safr.mastercocktail.domain.usecases.api.CocktailCategoryUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -20,31 +18,29 @@ class CocktailListViewModel @Inject constructor(
     application: Application
 ) : AndroidViewModel(application) {
 
-    private val catDrinkMut: MutableLiveData<List<DrinkNet>> = MutableLiveData()
+    private val catDrinkMut: MutableStateFlow<List<DrinkNet>?> = MutableStateFlow(listOf())
 
-    val catDrinkState: LiveData<List<DrinkNet>>
+    val catDrinkState: StateFlow<List<DrinkNet>?>
         get() = catDrinkMut
 
-    private val mutIsDataLoading: MutableLiveData<Boolean> = MutableLiveData()
-    val isDataLoading: LiveData<Boolean> = mutIsDataLoading
+    private val mutIsDataLoading: MutableStateFlow<Boolean> = MutableStateFlow(true)
+    val isDataLoading: StateFlow<Boolean> = mutIsDataLoading
 
-    private val mutIsError: MutableLiveData<Boolean> = MutableLiveData()
-    val isError: LiveData<Boolean> = mutIsError
+    private val mutIsError: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val isError: StateFlow<Boolean> = mutIsError
 
     fun catDrinkFun(str: String?) {
-        mutIsDataLoading.value = true
-        mutIsError.value = false
         viewModelScope.launch {
             catDrink.getCocktailsCategories(str ?: "Cocktail").collect { dataState ->
                 when (dataState) {
                     is DataState.Error -> dataState.exception.also {
-                        mutIsDataLoading.postValue(false)
-                        mutIsError.postValue(true)
+                        mutIsDataLoading.value = false
+                        mutIsError.value = true
                     }
-                    DataState.Loading -> mutIsDataLoading.postValue(true)
+                    DataState.Loading -> mutIsDataLoading.value = true
                     is DataState.Success -> {
-                        catDrinkMut.postValue(dataState.data?.drinks)
-                        mutIsDataLoading.postValue(false)
+                        catDrinkMut.value = dataState.data?.drinks
+                        mutIsDataLoading.value = false
                     }
 
                 }

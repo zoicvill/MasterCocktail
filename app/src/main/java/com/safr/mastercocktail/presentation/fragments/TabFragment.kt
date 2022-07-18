@@ -2,14 +2,18 @@ package com.safr.mastercocktail.presentation.fragments
 
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.google.android.material.tabs.TabLayoutMediator
 import com.safr.mastercocktail.databinding.FragmentTabBinding
 import com.safr.mastercocktail.presentation.adapters.ViewPagerAdapter
+import com.safr.mastercocktail.presentation.viewmodels.ConnectionLiveData
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -23,7 +27,7 @@ class TabFragment : Fragment() {
     private val mBinding get() = binding!!
 
     private var viewPagerAdapter: ViewPagerAdapter? = null
-
+    private val connectionLiveData: ConnectionLiveData by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,33 +49,18 @@ class TabFragment : Fragment() {
             tab.text = titlesArray[position]
         }.attach()
 
-//        if(!isOnline(requireContext())){
-////            Log.i("Internet", "NetworkCapabilities.TRANSPORT_CELLULAR")
-//
-//            findNavController().navigate(TabFragmentDirections.actionTabFragmentToErrorFragment(""))
-//        }
+        checkConnect()
 
     }
-//    @RequiresApi(Build.VERSION_CODES.M)
-//    fun isOnline(context: Context): Boolean {
-//        val connectivityManager =
-//            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-//        if (connectivityManager != null) {
-//            val capabilities =
-//                connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
-//            if (capabilities != null) {
-//                if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
-//                    Log.i("Internet", "NetworkCapabilities.TRANSPORT_CELLULAR")
-//                    return true
-//                } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
-//                    Log.i("Internet", "NetworkCapabilities.TRANSPORT_WIFI")
-//                    return true
-//                } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) {
-//                    Log.i("Internet", "NetworkCapabilities.TRANSPORT_ETHERNET")
-//                    return true
-//                }
-//            }
-//        }
-//        return false
-//    }
+
+
+    private fun checkConnect() = mBinding.run {
+        connectionLiveData.connect.observe(viewLifecycleOwner) { error ->
+            Log.d("lol", "if  connectionLiveData")
+            errrorView.root.isVisible = !error
+            tabLayout.isVisible = error
+            pager.isVisible = error
+        }
+
+    }
 }
